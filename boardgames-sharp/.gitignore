@@ -1,0 +1,65 @@
+﻿## .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Rider / IntelliJ IDEA
+.idea/
+*.sln.iml
+*.DotSettings.user
+.idea_modules/
+.idea/
+
+## OS-specific
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio Code (if used)
+.vscode/
+
+# Rider caches (optional, if you want to ignore all)
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+*.testresults
+
+# Resharper
+_ReSharper*/
+*.ReSharper
+*.DotSettings.user
+
+# Others
+*.vs/
