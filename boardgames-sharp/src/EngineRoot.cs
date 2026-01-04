@@ -21,6 +21,7 @@ public class EngineRoot
 
     private void _initialize()
     {
+        GameStateObservable.Initialize(this);
         ActionPerformer.Initialize(this);
         ActionStack.Initialize(this);
         GameStateManager.Initialize(this);

@@ -30,7 +30,6 @@ internal sealed class GameStateObservable: IObservable<IGameState>, IInitializeW
     private readonly List<IGameState> _gameStates = new();
     public void Initialize(EngineRoot engineRoot)
     {
-        throw new NotImplementedException();
     }
 }
 
