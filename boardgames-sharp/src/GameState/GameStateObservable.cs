@@ -1,11 +1,7 @@
-﻿namespace boardgames_sharp;
+﻿namespace boardgames_sharp.GameState;
 
-public interface IGameState
-{
-    
-}
 
-internal sealed class GameStateObservable: IObservable<IGameState>
+internal sealed class GameStateObservable: IObservable<IGameState>, IInitializeWithEngineRoot
 {
     public GameStateObservable()
     {}
@@ -31,7 +27,11 @@ internal sealed class GameStateObservable: IObservable<IGameState>
     }
     
     private readonly HashSet<IObserver<IGameState>> _observers = new();
-    private List<IGameState> _gameStates = new();
+    private readonly List<IGameState> _gameStates = new();
+    public void Initialize(EngineRoot engineRoot)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 internal sealed class Unsubscriber<T> : IDisposable
