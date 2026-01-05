@@ -9,7 +9,7 @@ public interface IGameStateActionPerformer
 }
 internal sealed partial class GameStateActionPerformer: IGameStateActionPerformer, IInitializeWithEngineRoot
 {
-    public void Initialize(EngineRoot engineRoot)
+    public void initialize(EngineRoot engineRoot)
     {
         _gameStateManager = engineRoot.GameStateManager;
     }

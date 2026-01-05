@@ -2,5 +2,5 @@
 
 public interface IPropertyModifier<T>
 {
-    T Apply(T currentValue);
+    public T apply_modifier(T currentValue);
 }

@@ -1,22 +1,32 @@
 ﻿namespace boardgames_sharp.Entity;
 
-public record struct PropertyId
+public record struct PropertyId<T>(ulong Id)
 {
-    public ulong Id;
-    public System.Type Type;
+    public readonly ulong Id = Id;
 }
 
-public class PropertiesOfType<T>(T zeroValue)
+public interface IReadOnlyPropertiesOfType<T>
 {
-    private readonly Dictionary<PropertyId, Property<T>> _properties = new();
+    IReadOnlyProperty<T> get_read_only(PropertyId<T> propertyId);
+    StatePropertiesOfType<T> get_state();
+}
+public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
+{
+    private readonly Dictionary<PropertyId<T>, Property<T>> _properties = new();
 
-    public void Add(PropertyId propertyId)
+    public Property<T> Add(PropertyId<T> propertyId)
     {
         var property = new Property<T>(zeroValue);
         _properties.Add(propertyId, property);
+        return property;
     }
 
-    public Property<T> Get(PropertyId propertyId)
+    public IReadOnlyProperty<T> get_read_only(PropertyId<T> propertyId)
+    {
+        var property = this.Get(propertyId);
+        return property as IReadOnlyProperty<T>;
+    }
+    public Property<T> Get(PropertyId<T> propertyId)
     {
         if (_properties.TryGetValue(propertyId, out var property))
         {
@@ -25,19 +35,19 @@ public class PropertiesOfType<T>(T zeroValue)
         throw new KeyNotFoundException();
     }
 
-    public StatePropertiesOfType<T> GetState()
+    public StatePropertiesOfType<T> get_state()
     {
-        var states = new List<Tuple<PropertyId, T>>();
+        var states = new List<Tuple<PropertyId<T>, T>>();
         foreach (var kvp in _properties)
         {
             var value = kvp.Value.CurrentValue();
-            states.Add(new Tuple<PropertyId, T>(kvp.Key, value));
+            states.Add(new Tuple<PropertyId<T>, T>(kvp.Key, value));
         }
         return new StatePropertiesOfType<T>(states);
     }
 }
 
-public class StatePropertiesOfType<T>(List<Tuple<PropertyId, T>> properties)
+public class StatePropertiesOfType<T>(List<Tuple<PropertyId<T>, T>> properties)
 {
-    private List<Tuple<PropertyId, T>> Properties { get; } = properties;
+    public List<Tuple<PropertyId<T>, T>> Properties { get; } = properties;
 }

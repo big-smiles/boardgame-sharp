@@ -16,19 +16,25 @@ internal sealed class GameStateObservable: IObservable<IGameState>, IInitializeW
     }
     public IDisposable Subscribe(IObserver<IGameState> observer)
     {
-        if(_observers.Add(observer))
+        //Here we are hedging against the observer calling an Interaction during the OnNext
+        //and that interaction possibly producing a new Publish
+        if(!_observers.Contains(observer))
         {
-            foreach (var gameState in _gameStates)
+            var index = 0;
+            while( index < _gameStates.Count) 
             {
+                var gameState = _gameStates[index];
                 observer.OnNext(gameState);
+                index++;
             }
         }
+        _observers.Add(observer);
         return new Unsubscriber<IGameState>(_observers, observer);
     }
     
     private readonly HashSet<IObserver<IGameState>> _observers = new();
     private readonly List<IGameState> _gameStates = new();
-    public void Initialize(EngineRoot engineRoot)
+    public void initialize(EngineRoot engineRoot)
     {
     }
 }

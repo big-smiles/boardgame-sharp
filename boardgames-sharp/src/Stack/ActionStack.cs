@@ -1,19 +1,20 @@
 ﻿using boardgames_sharp.Actions;
 using boardgames_sharp.Actions.ActionPerformer;
+using boardgames_sharp.Entity;
 
 namespace boardgames_sharp.Stack;
 
 public class ActionStack: IInitializeWithEngineRoot
 {
-    public void Initialize(EngineRoot engineRoot)
+    public void initialize(EngineRoot engineRoot)
     {
         this._actionPerformer = engineRoot.ActionPerformer;
         this._root = engineRoot;
     }
 
-    public void AddAction(IAction action)
+    public void AddAction(IAction action, HashSet<EntityId> entities)
     {
-        _stack.Push(action);
+        _stack.Push(new Tuple<IAction, HashSet<EntityId>>(action, entities));
         if (_isRunning) return;
         _isRunning = true;
         _run();
@@ -32,13 +33,15 @@ public class ActionStack: IInitializeWithEngineRoot
                 return;
             }
 
-            var action = _stack.Pop();
-            action.Do(this._actionPerformer);
+            var tuple = _stack.Pop();
+            var action = tuple.Item1;
+            var entities = tuple.Item2;
+            action.Do(this._actionPerformer, entities);
             
         }
     }
     private IActionPerformer? _actionPerformer;
-    private readonly Stack<IAction> _stack = new();
+    private readonly Stack<Tuple<IAction,HashSet<EntityId>>> _stack = new();
     private bool _isRunning = false;
     private EngineRoot? _root;
 }

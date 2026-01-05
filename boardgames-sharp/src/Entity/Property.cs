@@ -1,13 +1,17 @@
 ﻿namespace boardgames_sharp.Entity;
 
-public class Property<T>(T zeroValue)
+public interface IReadOnlyProperty<T>
+{
+    T CurrentValue();
+}
+public class Property<T>(T zeroValue):IReadOnlyProperty<T>
 {
     private T _currentValue = default!;
     private bool _needsRecalculation = true;
 
     public T CurrentValue()
     {
-        if (!_needsRecalculation)
+        if (_needsRecalculation)
         {
             _needsRecalculation = false;
             _currentValue = Recalculate();
@@ -26,7 +30,7 @@ public class Property<T>(T zeroValue)
         var value = zeroValue;
         foreach(var modifier in _modifiers)
         {
-            value = modifier.Apply(value);
+            value = modifier.apply_modifier(value);
         }
 
         return value;

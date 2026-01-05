@@ -2,7 +2,7 @@
 
 public partial class EntityActionPerformer
 {
-    public boardgames_sharp.Entity.Entity CreateEntity()
+    public boardgames_sharp.Entity.Entity create_entity()
     {
         if (_entityManager == null)
         {
