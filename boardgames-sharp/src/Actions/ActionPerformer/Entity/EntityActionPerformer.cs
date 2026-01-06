@@ -7,9 +7,10 @@ public interface IEntityActionPerformer
 {
     boardgames_sharp.Entity.Entity create_entity();
     HashSet<EntityId> query_entity_ids(IEntityQuery query);
-    boardgames_sharp.Entity.Entity get_entity(EntityId id);
+    IEntityReadOnly get_entity(EntityId id);
+    void add_modifier<T>(EntityId entityId, PropertyId<T> propertyId, IPropertyModifier<T> propertyModifier);
 }
-public partial class EntityActionPerformer: IEntityActionPerformer, IInitializeWithEngineRoot
+internal sealed partial class EntityActionPerformer: IEntityActionPerformer, IInitializeWithEngineRoot
 {
     public void initialize(EngineRoot engineRoot)
     {

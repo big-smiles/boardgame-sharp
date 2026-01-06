@@ -3,7 +3,7 @@ using boardgames_sharp.Entity.Modifiers;
 
 namespace boardgames_sharp.Actions.ActionPerformer.Entity;
 
-public partial class EntityActionPerformer: IInitializeWithEngineRoot, IEntityActionPerformer
+internal sealed partial class EntityActionPerformer: IInitializeWithEngineRoot, IEntityActionPerformer
 {
     public HashSet<EntityId> query_entity_ids(IEntityQuery query)
     {

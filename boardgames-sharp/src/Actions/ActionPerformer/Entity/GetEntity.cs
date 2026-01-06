@@ -2,9 +2,9 @@
 
 namespace boardgames_sharp.Actions.ActionPerformer.Entity;
 
-public partial class EntityActionPerformer: IEntityActionPerformer, IInitializeWithEngineRoot
+internal sealed partial class EntityActionPerformer: IEntityActionPerformer, IInitializeWithEngineRoot
 {
-    public boardgames_sharp.Entity.Entity get_entity(EntityId id)
+    public IEntityReadOnly get_entity(EntityId id)
     {
         if (_entityManager == null)
         {

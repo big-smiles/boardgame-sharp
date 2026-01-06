@@ -4,7 +4,12 @@ using boardgames_sharp.Entity;
 
 namespace boardgames_sharp.Stack;
 
-public class ActionStack: IInitializeWithEngineRoot
+public interface IActionStack
+{
+    public void AddPhaseAction(IAction action);
+    public void AddInteractionAction(IAction action, HashSet<EntityId> entities);
+}
+internal sealed class ActionStack: IInitializeWithEngineRoot, IActionStack
 {
     public void initialize(EngineRoot engineRoot)
     {
@@ -12,7 +17,12 @@ public class ActionStack: IInitializeWithEngineRoot
         this._root = engineRoot;
     }
 
-    public void AddAction(IAction action, HashSet<EntityId> entities)
+    public void AddPhaseAction(IAction action)
+    {
+        AddInteractionAction(action, []);
+    }
+
+    public void AddInteractionAction(IAction action, HashSet<EntityId> entities)
     {
         _stack.Push(new Tuple<IAction, HashSet<EntityId>>(action, entities));
         if (_isRunning) return;

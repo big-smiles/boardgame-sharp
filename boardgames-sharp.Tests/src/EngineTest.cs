@@ -6,6 +6,7 @@ using boardgames_sharp.Actions.ActionPerformer;
 using boardgames_sharp.Entity;
 using boardgames_sharp.Entity.Modifiers;
 using boardgames_sharp.GameState;
+using boardgames_sharp.Phases;
 using JetBrains.Annotations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -21,9 +22,14 @@ public class EngineTest
     {
         var startingAction = 
             new TestAction(
-                @do: ((performer, ids) => performer.GameState.PublishNew()),
+                @do: ((performer, ids) =>
+                {
+                    performer.Phase.Pause();
+                    performer.GameState.PublishNew();
+                }),
             undo: ((performer, ids) => Assert.Fail("this shouldn't be called here")));
-        var engine = new Engine(startingAction, null);
+        var phase = new Phase(startingAction);
+        var engine = new Engine(null,phase);
         var count = 0;
         var dispose = engine.GameStateObservable.Subscribe(
             new TestObserver(
@@ -48,10 +54,12 @@ public class EngineTest
                 {
                     var entity = performer.Entity.create_entity();
                     Assert.IsNotNull(entity);
+                    performer.Phase.Pause();
                     performer.GameState.PublishNew();
                 }),
                 undo: ((performer, ids) => Assert.Fail("this shouldn't be called here")));
-        var engine = new Engine(startingAction, null);
+        var phase = new Phase(startingAction);
+        var engine = new Engine(null, phase);
         var count = 0;
         var dispose = engine.GameStateObservable.Subscribe(
             new TestObserver(
@@ -84,11 +92,13 @@ public class EngineTest
                     var property = intProperties.Add(propertyId);
                     var modifier = new ModifierSetValue<int>(propertyValue);
                     property.AddModifier(modifier);
+                    performer.Phase.Pause();
                     performer.GameState.PublishNew();
                     
                 }),
                 undo: ((performer, ids) => Assert.Fail("this shouldn't be called here")));
-        var engine = new Engine(startingAction, null);
+        var phase = new Phase(startingAction);
+        var engine = new Engine(null, phase);
         var count = 0;
         var dispose = engine.GameStateObservable.Subscribe(
             new TestObserver(
@@ -138,12 +148,9 @@ public class EngineTest
                             {
                                 Assert.HasCount(1, ids);
                                 var entityId = ids.First();
-                                var entity = actionPerformer.Entity.get_entity(entityId);
-                                var intProperties = entity.GetPropertiesOfType<int>();
                                 var intPropertyId = new PropertyId<int>(propertyIdValue);
-                                var intProperty = intProperties.Get(intPropertyId);
                                 var modifier = new ModifierSetValue<int>(propertyValue);
-                                intProperty.AddModifier(modifier);
+                                performer.Entity.add_modifier(entityId, intPropertyId, modifier);
                                 performer.Interaction.clear_available_interactions();
                                 performer.GameState.PublishNew();
                                     
@@ -154,11 +161,13 @@ public class EngineTest
                             }
                         )
                     );
+                    performer.Phase.Pause();
                     performer.GameState.PublishNew();
    
                 }),
                 undo: ((performer, ids) => Assert.Fail("this shouldn't be called here")));
-        var engine = new Engine(startingAction, null);
+        var phase = new Phase(startingAction);
+        var engine = new Engine(null, phase);
         var count = 0;
         var dispose = engine.GameStateObservable.Subscribe(
             new TestObserver(
@@ -202,50 +211,5 @@ public class EngineTest
         );
         Assert.AreEqual(2, count, "should return two states");
         
-    }
-}
-
-internal class TestObserver(DOnComplete onComplete, DOnError onError, DOnNext onNext) : IObserver<IGameState>
-{
-    public void OnCompleted()
-    {
-        onComplete();
-    }
-
-    public void OnError(Exception error)
-    {
-        onError(error);
-    }
-
-    public void OnNext(IGameState value)
-    {
-        onNext(value);
-    }
-}
-
-internal delegate void DOnComplete(); 
-internal delegate void DOnError(Exception error); 
-internal delegate void DOnNext(IGameState value);
-
-internal class TestAction(DAction @do, DAction undo) : IAction
-{
-    public void Do(IActionPerformer actionPerformer, HashSet<EntityId>  ids)
-    {
-        @do(actionPerformer, ids);
-    }
-
-    public void Undo(IActionPerformer actionPerformer, HashSet<EntityId>  ids)
-    {
-        undo(actionPerformer, ids);
-    }
-} 
-internal delegate void DAction(IActionPerformer actionPerformer, HashSet<EntityId>  ids);
-
-internal delegate bool DEntityQuery(IEntityReadOnly entity);
-internal class TestEntityQuery(DEntityQuery entityQuery) : IEntityQuery
-{
-    public bool select_entity(IEntityReadOnly entity)
-    {
-        return entityQuery(entity);
     }
 }

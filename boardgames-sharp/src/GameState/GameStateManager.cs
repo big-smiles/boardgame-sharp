@@ -3,7 +3,7 @@ using boardgames_sharp.Interaction;
 
 namespace boardgames_sharp.GameState;
 
-public class GameStateManager: IInitializeWithEngineRoot
+internal sealed class GameStateManager: IInitializeWithEngineRoot
 {
     public void initialize(EngineRoot engineRoot)
     {
@@ -24,7 +24,12 @@ public class GameStateManager: IInitializeWithEngineRoot
         if(_interactionManager == null) throw new NullReferenceException("Interaction manager is null");
         var entities = _entityManager.get_state();
         var availableInteractions = _interactionManager.get_available_interactions();
-        var gameState = new GameState(entities:entities, availableInteractions);
+        var gameState = new GameState(Count, entities:entities, availableInteractions);
         this._gameStateObservable.Publish(gameState);
     }
+
+    private int Count
+    {
+        get => field++;
+    } = 1;
 }

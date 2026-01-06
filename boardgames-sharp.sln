@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "boardgames-sharp", "boardga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "boardgames-sharp.Tests", "boardgames-sharp.Tests\boardgames-sharp.Tests.csproj", "{AE912C1A-3BE5-4280-9EFD-96D533FA342E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "examples", "examples\examples.csproj", "{3071AE49-A96F-4011-A72D-46AD1AFE89CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{AE912C1A-3BE5-4280-9EFD-96D533FA342E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE912C1A-3BE5-4280-9EFD-96D533FA342E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE912C1A-3BE5-4280-9EFD-96D533FA342E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

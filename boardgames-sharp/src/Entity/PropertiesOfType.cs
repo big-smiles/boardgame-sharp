@@ -8,6 +8,7 @@ public record struct PropertyId<T>(ulong Id)
 public interface IReadOnlyPropertiesOfType<T>
 {
     IReadOnlyProperty<T> get_read_only(PropertyId<T> propertyId);
+    bool Contains(PropertyId<T> propertyId);
     StatePropertiesOfType<T> get_state();
 }
 public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
@@ -26,6 +27,12 @@ public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
         var property = this.Get(propertyId);
         return property as IReadOnlyProperty<T>;
     }
+
+    public bool Contains(PropertyId<T> propertyId)
+    {
+        return _properties.ContainsKey(propertyId);
+    }
+
     public Property<T> Get(PropertyId<T> propertyId)
     {
         if (_properties.TryGetValue(propertyId, out var property))
@@ -50,4 +57,17 @@ public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
 public class StatePropertiesOfType<T>(List<Tuple<PropertyId<T>, T>> properties)
 {
     public List<Tuple<PropertyId<T>, T>> Properties { get; } = properties;
+    
+    public T Get(PropertyId<T> propertyId)
+    {
+        foreach (var tuple in Properties)
+        {
+            if (tuple.Item1 != propertyId)
+            {
+                continue;
+            }
+            return tuple.Item2;
+        }
+        throw new KeyNotFoundException();
+    }
 }

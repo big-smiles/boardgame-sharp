@@ -1,6 +1,6 @@
 ﻿namespace boardgames_sharp.Actions.ActionPerformer.Entity;
 
-public partial class EntityActionPerformer
+internal sealed partial class EntityActionPerformer
 {
     public boardgames_sharp.Entity.Entity create_entity()
     {

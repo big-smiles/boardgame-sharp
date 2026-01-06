@@ -12,7 +12,7 @@ public interface IEntityManager
     HashSet<EntityId> query_entity_ids(IEntityQuery query);
 
 }
-public class EntityManager: IEntityManager, IInitializeWithEngineRoot
+internal sealed class EntityManager: IEntityManager, IInitializeWithEngineRoot
 {
     public void initialize(EngineRoot engineRoot)
     {

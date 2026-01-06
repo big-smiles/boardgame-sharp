@@ -1,23 +1,25 @@
 ﻿using boardgames_sharp.Actions;
 using boardgames_sharp.GameState;
 using boardgames_sharp.Interaction;
+using boardgames_sharp.Phases;
 
 namespace boardgames_sharp;
 
 public class Engine
 {
-    public Engine(IAction startingAction, HashSet<uint>? players)
+    public Engine(HashSet<uint>? players, IPhase phase)
     {
         Console.WriteLine("Engine initialized");
         
         players ??= new HashSet<uint>();
 
-        var engineRoot = new EngineRoot(players);
+        var engineRoot = new EngineRoot(players, phase);
         
         GameStateObservable = engineRoot.GameStateObservable;
         _interactionManager = engineRoot.InteractionManager;
         //TO-DO replace this with phases
-        engineRoot.ActionStack.AddAction(startingAction, []);
+        var phaseManager = engineRoot.PhaseManager;
+        phaseManager.Resume();
 
     }
     public IObservable<IGameState> GameStateObservable { get; }
