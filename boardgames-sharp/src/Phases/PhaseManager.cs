@@ -21,6 +21,7 @@ internal sealed class PhaseManager(IPhase phase):IInitializeWithEngineRoot, IPha
 
     public void Resume()
     {
+      
         if (_actionStack == null)
         {
             throw new BadRootInitializationException("_actionStack is null");
@@ -37,7 +38,11 @@ internal sealed class PhaseManager(IPhase phase):IInitializeWithEngineRoot, IPha
         
         while (!_paused)
         {
-            phase.Next(_actionStack);    
+            var ret = phase.Next(_actionStack);
+            if (!ret)
+            {
+                break;
+            }
         }
         _running = false;
     }

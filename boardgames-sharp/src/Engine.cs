@@ -18,9 +18,13 @@ public class Engine
         GameStateObservable = engineRoot.GameStateObservable;
         _interactionManager = engineRoot.InteractionManager;
         //TO-DO replace this with phases
-        var phaseManager = engineRoot.PhaseManager;
-        phaseManager.Resume();
+        _phaseManager = engineRoot.PhaseManager;
 
+    }
+    private IPhaseManager _phaseManager;
+    public void Start()
+    {
+        _phaseManager.Resume();   
     }
     public IObservable<IGameState> GameStateObservable { get; }
 

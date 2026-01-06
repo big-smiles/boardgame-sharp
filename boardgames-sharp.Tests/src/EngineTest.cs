@@ -42,6 +42,7 @@ public class EngineTest
                 }
             )
         );
+        engine.Start();
         Assert.AreEqual(1, count, "should return one initial state");
         
     }
@@ -72,6 +73,7 @@ public class EngineTest
                 }
             )
         );
+        engine.Start();
         Assert.AreEqual(1, count, "should return one initial state");
         
     }
@@ -119,6 +121,7 @@ public class EngineTest
                 }
             )
         );
+        engine.Start();
         Assert.AreEqual(1, count, "should return one initial state");
         
     }   
@@ -152,6 +155,7 @@ public class EngineTest
                                 var modifier = new ModifierSetValue<int>(propertyValue);
                                 performer.Entity.add_modifier(entityId, intPropertyId, modifier);
                                 performer.Interaction.clear_available_interactions();
+                                // performer.Phase.Pause();
                                 performer.GameState.PublishNew();
                                     
                             }, 
@@ -175,6 +179,7 @@ public class EngineTest
                 onError: (error) => Assert.Fail("this shouldn't be called here"),
                 onNext: (state) =>
                 {
+                    Console.WriteLine(state.Id);
                     count++;
                     if (count == 1)
                     {
@@ -209,6 +214,7 @@ public class EngineTest
                 }
             )
         );
+        engine.Start();
         Assert.AreEqual(2, count, "should return two states");
         
     }
