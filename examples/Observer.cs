@@ -47,6 +47,20 @@ internal class StateObserver(Board board, Input input, Engine engine) : IObserve
             board.SetCell(x, y, value);
         }
         board.Draw();
+        if (state.WinnerPlayerId != null)
+        {
+            if (state.WinnerPlayerId.Equals(Constants.Player1))
+            {
+                Console.WriteLine("Player X won!");
+            }
+            else
+            {
+                Console.WriteLine("Player O won!");
+            }
+
+            return;
+
+        }
         //TODO this obviously is bullcrap, we are not directing the interaction but only assuming shit
         if (state.AvailableInteractions.Count > 0)
         {

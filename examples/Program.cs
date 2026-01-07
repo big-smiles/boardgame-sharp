@@ -1,11 +1,12 @@
 ﻿using boardgames_sharp;
 using boardgames_sharp.Phases;
+using boardgames_sharp.Player;
 using examples;
 using examples.Phases;
 
 Console.WriteLine("Tic-Tac-Toe!");
 
-var players = new HashSet<uint>(){1,2};
+var players = new HashSet<PlayerId>(){new PlayerId(1),new PlayerId(2)};
 var initializePhase = new InitializeGamePhase();
 var player1Turn = new PlayerTurnPhase(Constants.Player1);
 var player2Turn = new PlayerTurnPhase(Constants.Player2);

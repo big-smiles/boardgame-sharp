@@ -2,16 +2,17 @@
 using boardgames_sharp.GameState;
 using boardgames_sharp.Interaction;
 using boardgames_sharp.Phases;
+using boardgames_sharp.Player;
 
 namespace boardgames_sharp;
 
 public class Engine
 {
-    public Engine(HashSet<uint>? players, IPhase phase)
+    public Engine(HashSet<PlayerId>? players, IPhase phase)
     {
         Console.WriteLine("Engine initialized");
         
-        players ??= new HashSet<uint>();
+        players ??= new HashSet<PlayerId>();
 
         var engineRoot = new EngineRoot(players, phase);
         

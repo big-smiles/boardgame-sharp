@@ -10,7 +10,8 @@ namespace boardgames_sharp;
 
 internal sealed class EngineRoot
 {
-    internal PlayerManager PlayerManager { get; }
+    private PlayerManager _playerManager;
+    public IPlayerManager PlayerManager => _playerManager;
     internal GameStateObservable GameStateObservable { get; } = new();
     internal GameStateManager GameStateManager { get; } = new();
     private readonly ActionPerformer _actionPerformer = new();
@@ -26,9 +27,9 @@ internal sealed class EngineRoot
     private readonly PhaseManager _phaseManager;
     public IPhaseManager PhaseManager => _phaseManager;
 
-    public EngineRoot(HashSet<uint> players, IPhase phase)
+    public EngineRoot(HashSet<PlayerId> players, IPhase phase)
     {
-        PlayerManager = new PlayerManager(players);
+        _playerManager = new PlayerManager(players);
         _phaseManager = new PhaseManager(phase);
         _initialize();
     }
