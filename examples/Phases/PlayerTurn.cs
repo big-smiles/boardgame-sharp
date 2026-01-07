@@ -4,6 +4,7 @@ using boardgames_sharp.Entity;
 using boardgames_sharp.Entity.Modifiers;
 using boardgames_sharp.Interaction;
 using boardgames_sharp.Phases;
+using boardgames_sharp.Player;
 using boardgames_sharp.Stack;
 
 namespace examples.Phases;
@@ -48,13 +49,14 @@ public class PlayerTurnPhase(uint playerId):IPhase
                 }
                 performer.Interaction.clear_available_interactions();
                 var entity = entityIds.First();
-                var value = playerId == Constants.Player1?Constants.ValuePlayer1:Constants.ValuePlayer2;
+                var value = playerId == Constants.ValuePlayer1?Constants.ValuePlayer1:Constants.ValuePlayer2;
                 var modifier = new ModifierSetValue<int>(value);
                 performer.Entity.add_modifier(entity, Constants.ValueIntPropertyId, modifier);
                 var result = _verifyWin(performer);
-                if (result != Constants.ValuePlayer1)
+                if (result != Constants.ValueEmpty)
                 {
-                    
+                    var winner = new PlayerId((ulong)result);
+                    performer.Player.Win(winner);
                 }
                 performer.GameState.PublishNew();
                 
@@ -112,7 +114,7 @@ public class PlayerTurnPhase(uint playerId):IPhase
                 public bool select_entity(IEntityReadOnly entity)
                 {
                     var intProperties = entity.get_readonly_properties_of_type<int>();
-                    return !intProperties.Contains(Constants.ValueIntPropertyId);
+                    return intProperties.Contains(Constants.ValueIntPropertyId);
                 }
             }
         }

@@ -2,6 +2,7 @@
 using boardgames_sharp.Actions.ActionPerformer.GameState;
 using boardgames_sharp.Actions.ActionPerformer.Interaction;
 using boardgames_sharp.Actions.ActionPerformer.Phase;
+using boardgames_sharp.Actions.ActionPerformer.Player;
 
 namespace boardgames_sharp.Actions.ActionPerformer;
 
@@ -11,6 +12,7 @@ public interface IActionPerformer
     IGameStateActionPerformer GameState { get; }
     IInteractionActionPerformer Interaction { get; }
     IPhaseActionPerformer Phase { get; }
+    IPlayerActionPerformer Player { get; }
 }
 internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRoot
 {
@@ -20,6 +22,7 @@ internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRo
         this._gameState.initialize(engineRoot);
         this._interaction.initialize(engineRoot);
         _phase.initialize(engineRoot);
+        _player.initialize(engineRoot);
     }
 
     private readonly EntityActionPerformer _entity = new();
@@ -30,4 +33,6 @@ internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRo
     public IInteractionActionPerformer Interaction => _interaction;
     private readonly PhaseActionPerformer _phase = new();
     public IPhaseActionPerformer Phase => _phase;
+    private  readonly PlayerActionPerformer _player = new();
+    public IPlayerActionPerformer Player => _player;
 }

@@ -8,7 +8,7 @@ using boardgames_sharp.Stack;
 
 namespace boardgames_sharp;
 
-internal sealed class EngineRoot
+public sealed class EngineRoot
 {
     private PlayerManager _playerManager;
     public IPlayerManager PlayerManager => _playerManager;

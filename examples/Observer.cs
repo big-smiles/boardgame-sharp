@@ -51,11 +51,11 @@ internal class StateObserver(Board board, Input input, Engine engine) : IObserve
         {
             if (state.WinnerPlayerId.Equals(Constants.Player1))
             {
-                Console.WriteLine("Player X won!");
+                Console.WriteLine("Player O won!");
             }
             else
             {
-                Console.WriteLine("Player O won!");
+                Console.WriteLine("Player X won!");
             }
 
             return;
