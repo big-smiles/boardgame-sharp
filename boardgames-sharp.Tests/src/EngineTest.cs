@@ -88,12 +88,12 @@ public class EngineTest
                 {
                     var entity = performer.Entity.create_entity();
                     Assert.IsNotNull(entity);
-                    var intProperties = entity.GetPropertiesOfType<int>();
+                    var intProperties = entity.get_readonly_properties_of_type<int>();
                     Assert.IsNotNull(intProperties, "should have int properties");
                     var propertyId = new PropertyId<int>(propertyIdValue);
-                    var property = intProperties.Add(propertyId);
+                    var property = performer.Entity.add_property<int>(entity.Id, propertyId);
                     var modifier = new ModifierSetValue<int>(propertyValue);
-                    property.AddModifier(modifier);
+                    performer.Entity.add_modifier(entity.Id,propertyId, modifier);
                     performer.Phase.Pause();
                     performer.GameState.PublishNew();
                     
@@ -136,10 +136,10 @@ public class EngineTest
                 {
                     var entity = performer.Entity.create_entity();
                     Assert.IsNotNull(entity);
-                    var intProperties = entity.GetPropertiesOfType<int>();
+                    var intProperties = entity.get_readonly_properties_of_type<int>();
                     Assert.IsNotNull(intProperties, "should have int properties");
                     var propertyId = new PropertyId<int>(propertyIdValue);
-                    intProperties.Add(propertyId);
+                    var intProperty = performer.Entity.add_property<int>(entity.Id, propertyId);
                     var entityIds = new HashSet<EntityId>(){entity.Id};
                     performer.Interaction.add_available_interaction(
                         playerId: 1,

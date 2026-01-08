@@ -38,13 +38,14 @@ public class InitializeGamePhase():IPhase
         private void CreateEntity(IActionPerformer performer, int x, int y)
         {
             var entity = performer.Entity.create_entity();
-            var intProperties = entity.GetPropertiesOfType<int>();
-            var xProperty = intProperties.Add(Constants.XIntPropertyId);
-            xProperty.AddModifier(new ModifierSetValue<int>(x));
-            var yProperty = intProperties.Add(Constants.YIntPropertyId);
-            yProperty.AddModifier(new ModifierSetValue<int>(y));
-            var valueProperty = intProperties.Add(Constants.ValueIntPropertyId);
-            valueProperty.AddModifier(new ModifierSetValue<int>(Constants.ValueEmpty));
+            
+            performer.Entity.add_property(entity.Id, Constants.XIntPropertyId);
+            performer.Entity.add_modifier(entity.Id, Constants.XIntPropertyId, new ModifierSetValue<int>(x));
+            performer.Entity.add_property(entity.Id, Constants.YIntPropertyId);
+            performer.Entity.add_modifier(entity.Id, Constants.YIntPropertyId, new ModifierSetValue<int>(y));
+            performer.Entity.add_property(entity.Id, Constants.ValueIntPropertyId);
+            performer.Entity.add_modifier(entity.Id, Constants.ValueIntPropertyId, new ModifierSetValue<int>(Constants.ValueEmpty));
+           
         }
     }
 }

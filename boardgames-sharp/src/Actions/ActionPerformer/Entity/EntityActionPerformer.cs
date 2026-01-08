@@ -5,7 +5,9 @@ namespace boardgames_sharp.Actions.ActionPerformer.Entity;
 
 public interface IEntityActionPerformer
 {
-    boardgames_sharp.Entity.Entity create_entity();
+    IEntityReadOnly create_entity();
+    IPropertyReadOnly<T> add_property<T>(EntityId id, PropertyId<T> propertyId);
+    IPropertyOfSetReadOnly<T> add_property_of_set<T>(EntityId id, PropertyId<ISet<T>> propertyId);
     HashSet<EntityId> query_entity_ids(IEntityQuery query);
     IEntityReadOnly get_entity(EntityId id);
     void add_modifier<T>(EntityId entityId, PropertyId<T> propertyId, IPropertyModifier<T> propertyModifier);

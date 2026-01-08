@@ -1,8 +1,10 @@
-﻿namespace boardgames_sharp.Actions.ActionPerformer.Entity;
+﻿using boardgames_sharp.Entity;
+
+namespace boardgames_sharp.Actions.ActionPerformer.Entity;
 
 internal sealed partial class EntityActionPerformer
 {
-    public boardgames_sharp.Entity.Entity create_entity()
+    public IEntityReadOnly create_entity()
     {
         if (_entityManager == null)
         {

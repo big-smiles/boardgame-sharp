@@ -1,10 +1,10 @@
 ﻿namespace boardgames_sharp.Entity;
 
-public interface IReadOnlyProperty<T>
+public interface IPropertyReadOnly<T>
 {
     T CurrentValue();
 }
-public class Property<T>(T zeroValue):IReadOnlyProperty<T>
+public class Property<T>(T zeroValue):IPropertyReadOnly<T>
 {
     private T _currentValue = default!;
     private bool _needsRecalculation = true;

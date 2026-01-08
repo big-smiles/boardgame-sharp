@@ -7,7 +7,7 @@ public record struct PropertyId<T>(ulong Id)
 
 public interface IReadOnlyPropertiesOfType<T>
 {
-    IReadOnlyProperty<T> get_read_only(PropertyId<T> propertyId);
+    IPropertyReadOnly<T> get_read_only(PropertyId<T> propertyId);
     bool Contains(PropertyId<T> propertyId);
     StatePropertiesOfType<T> get_state();
 }
@@ -22,10 +22,10 @@ public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
         return property;
     }
 
-    public IReadOnlyProperty<T> get_read_only(PropertyId<T> propertyId)
+    public IPropertyReadOnly<T> get_read_only(PropertyId<T> propertyId)
     {
         var property = this.Get(propertyId);
-        return property as IReadOnlyProperty<T>;
+        return property as IPropertyReadOnly<T>;
     }
 
     public bool Contains(PropertyId<T> propertyId)
