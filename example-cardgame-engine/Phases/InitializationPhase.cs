@@ -24,6 +24,8 @@ public class InitializationPhase(List<ICardData> cardsOnPlayerDeck):IPhase
         {
             performer.Card.create_card_on_player_deck(cardData);
         }
+        performer.BasePerformer.Phase.Pause();
+        performer.BasePerformer.GameState.PublishNew();
     }
 
     public void _undo(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)

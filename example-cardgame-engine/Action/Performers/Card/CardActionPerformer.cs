@@ -26,6 +26,7 @@ public sealed partial class CardActionPerformer(IActionPerformer basePerformer, 
         var card = _create_card(cardData);
         var deckId = basePerformer.Entity.get_saved_entity(CONSTANTS.KEY_ENTITY_IDS.PLAYER_DECK);
         cardGamePerformer.Container.add_entity_to_container(card.EntityId, deckId);
+        cardGamePerformer.BasePerformer.Entity.add_modifier_set_value(card.EntityId, CONSTANTS.PROPERTY_IDS.INT.CARD_LOCATION, (int)ECardLocations.Deck);
         return card;
     }
 }

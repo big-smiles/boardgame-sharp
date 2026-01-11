@@ -72,8 +72,12 @@ public class Entity(EntityId id): IEntityReadOnly
         {
             return this._entityId as PropertiesOfType<T> ?? throw new InvalidOperationException();
         }
+        if (typeof(T) == typeof(IAction))
+        {
+            return this._actionProperties as PropertiesOfType<T> ?? throw new InvalidOperationException();
+        }
         
-        throw new ArgumentException("Type not supported");
+        throw new ArgumentException("Type not supported" + typeof(T).ToString());
     }
 
     public StateEntity get_state()

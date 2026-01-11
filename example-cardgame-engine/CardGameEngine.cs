@@ -12,13 +12,18 @@ public class CardGameEngine
     {
         var phases = new InitializationPhase(playerDeck);
         var players = new HashSet<PlayerId>(){CONSTANTS.PLAYER_IDS.PLAYER};
-        var engine = new Engine(players, phases);
+        _engine = new Engine(players, phases);
         _observable = new CardGameStateObservable();
         GameStateObserver gameStateObserver = new GameStateObserver(_observable);
-        engine.GameStateObservable.Subscribe(gameStateObserver);
-        engine.Start();
+        _engine.GameStateObservable.Subscribe(gameStateObserver);
     }
 
-    private CardGameStateObservable _observable;
+    public void Start()
+    {
+        _engine.Start();
+    }
+    
+    private readonly Engine _engine;
+    private readonly CardGameStateObservable _observable;
     public IObservable<ICardGameState> Observable => _observable;
 }
