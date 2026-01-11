@@ -10,12 +10,12 @@ internal class GameStateObserver(IPublishCardGameState publisher):IObserver<IGam
 {
     public void OnCompleted()
     {
-        throw new NotImplementedException();
+        publisher.Complete();
     }
 
     public void OnError(Exception error)
     {
-        throw new NotImplementedException();
+        publisher.Error(error);
     }
 
     public void OnNext(IGameState value)

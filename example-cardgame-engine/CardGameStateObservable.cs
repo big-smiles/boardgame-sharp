@@ -2,12 +2,28 @@
 internal interface IPublishCardGameState
 {
     void Publish(ICardGameState gameState);
+    void Complete();
+    void Error(Exception error);
 }
 internal sealed class CardGameStateObservable: IObservable<ICardGameState>, IPublishCardGameState
 {
     public CardGameStateObservable()
     {}
 
+    public void Complete()
+    {
+        foreach (var observer in _observers)
+        {
+            observer.OnCompleted();
+        }
+    }
+    public void Error(Exception error)
+    {
+        foreach (var observer in _observers)
+        {
+            observer.OnError(error);
+        }
+    }
     public void Publish(ICardGameState gameState)
     {
         this._gameStates.Add(gameState);
