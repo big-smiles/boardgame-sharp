@@ -15,13 +15,14 @@ public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
 {
     private readonly Dictionary<PropertyId<T>, Property<T>> _properties = new();
 
-    public Property<T> Add(PropertyId<T> propertyId)
+    public Property<T> Add(PropertyId<T> propertyId) => Add(propertyId, zeroValue);
+   
+    public Property<T> Add(PropertyId<T> propertyId, T value)
     {
-        var property = new Property<T>(zeroValue);
+        var property = new Property<T>(value);
         _properties.Add(propertyId, property);
         return property;
     }
-
     public IPropertyReadOnly<T> get_read_only(PropertyId<T> propertyId)
     {
         var property = this.Get(propertyId);

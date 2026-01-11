@@ -10,6 +10,14 @@ public interface IEntityManager
     StateEntities get_state();
     bool entities_exist(HashSet<EntityId> entityIds);
     HashSet<EntityId> query_entity_ids(IEntityQuery query);
+    /// <summary>
+    /// store an entityId for easy access later
+    /// </summary>
+    /// <param name="entityId"></param>
+    /// <param name="key">Save address is just an arbitrary int you use to retrieve this entityId afterwards</param>
+    void save_entity(EntityId entityId, int key);
+    EntityId get_saved_entity(int key);
+    
 
 }
 internal sealed class EntityManager: IEntityManager, IInitializeWithEngineRoot
@@ -77,12 +85,28 @@ internal sealed class EntityManager: IEntityManager, IInitializeWithEngineRoot
         return entityIds;
     }
 
+    public void save_entity(EntityId entityId, int key)
+    {
+        _savedEntityIds.Add(key, entityId);
+    }
+
+    public EntityId get_saved_entity(int key)
+    {
+        if (!_savedEntityIds.TryGetValue(key, out var entityId))
+        {
+            throw new KeyNotFoundException($"EntityId with key {key} was not saved");
+        }
+        return entityId;
+    }
+    private readonly Dictionary<int, EntityId> _savedEntityIds = new Dictionary<int, EntityId>();
     private readonly Dictionary<EntityId, Entity> _entities = new Dictionary<EntityId, Entity>();
     private readonly HashSet<EntityId> _entityIds = new();
     private ulong NextId
     {
         get => field++;
     } = 1;
+
+    public static readonly EntityId ZeroValueEntityId = new EntityId(0);
 
 }
 

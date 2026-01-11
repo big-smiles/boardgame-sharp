@@ -29,7 +29,7 @@ internal sealed class InteractionManager:IInteractionManager, IInitializeWithEng
         }
         
         var interactionId = NextId;
-        Console.WriteLine($"Adding interaction with id " + interactionId);
+        // Console.WriteLine($"Adding interaction with id " + interactionId);
         var interactionOption = new AvailableInteraction(interactionId, playerId, availableEntityIds, min, max);
         _availableInteractions.Add(interactionId,new Tuple<AvailableInteraction, IAction>(interactionOption, actionWhenSelected));
         _phaseManager.Pause();

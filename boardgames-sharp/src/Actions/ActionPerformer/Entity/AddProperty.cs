@@ -13,4 +13,14 @@ internal sealed partial class EntityActionPerformer: IEntityActionPerformer
         var entity = _entityManager.get_by_id(entityId);
         return entity.add_property(propertyId);
     }
+
+    public IPropertyReadOnly<T> add_property<T>(EntityId entityId, PropertyId<T> propertyId, T value)
+    {
+        if (_entityManager == null)
+        {
+            throw new BadRootInitializationException("_entityManager was not initialized");
+        }
+        var entity = _entityManager.get_by_id(entityId);
+        return entity.add_property(propertyId, value);    
+    }
 }

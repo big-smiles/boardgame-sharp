@@ -13,13 +13,13 @@ public class PropertyOfSet<T>():IPropertyOfSetReadOnly<T>
         return _set.AsReadOnly();
     }
 
-    public void AddValue(T value)
+    public void AddElement(T element)
     {
-        _set.Add(value);
+        _set.Add(element);
     }
 
-    public void RemoveValue(T value)
+    public void RemoveElement(T element)
     {
-        _set.Remove(value);
+        _set.Remove(element);
     } 
 }

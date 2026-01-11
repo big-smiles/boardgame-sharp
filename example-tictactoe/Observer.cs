@@ -25,6 +25,7 @@ internal class StateObserver(Board board, Input input, Engine engine) : IObserve
         Console.WriteLine("Observer count=" + count++);
         foreach (var tuple in state.Entities.Entities)
         {
+            Console.Clear();
             var entity = tuple.Item2;
             int x = 0;
             int y = 0;
@@ -65,7 +66,7 @@ internal class StateObserver(Board board, Input input, Engine engine) : IObserve
         if (state.AvailableInteractions.Count > 0)
         {
             var availableInteraction = state.AvailableInteractions[0];
-            Console.WriteLine("GameStateID=" + state.Id + " interactionId=" + availableInteraction.InteractionId);
+            // Console.WriteLine("GameStateID=" + state.Id + " interactionId=" + availableInteraction.InteractionId);
             var selectedTuple = input.GetInput();
             var sectedX = selectedTuple.Item1;
             var sectedY = selectedTuple.Item2;

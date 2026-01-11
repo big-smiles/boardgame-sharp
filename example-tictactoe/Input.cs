@@ -27,6 +27,7 @@ public class Input(Board board)
         while (true)
         {
             Console.WriteLine(message);
+            Console.Out.Flush();
             var line = Console.ReadLine();
             if (int.TryParse(line, out var number))
             {

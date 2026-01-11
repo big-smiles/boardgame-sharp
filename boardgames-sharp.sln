@@ -4,7 +4,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "boardgames-sharp", "boardga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "boardgames-sharp.Tests", "boardgames-sharp.Tests\boardgames-sharp.Tests.csproj", "{AE912C1A-3BE5-4280-9EFD-96D533FA342E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "examples", "examples\examples.csproj", "{3071AE49-A96F-4011-A72D-46AD1AFE89CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "example-tictactoe", "example-tictactoe\example-tictactoe.csproj", "{3071AE49-A96F-4011-A72D-46AD1AFE89CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "example-cardgame-engine", "example-cardgame-engine\example-cardgame-engine.csproj", "{4700AD9D-8B67-4717-B985-063429AA53AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +26,9 @@ Global
 		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3071AE49-A96F-4011-A72D-46AD1AFE89CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4700AD9D-8B67-4717-B985-063429AA53AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4700AD9D-8B67-4717-B985-063429AA53AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4700AD9D-8B67-4717-B985-063429AA53AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4700AD9D-8B67-4717-B985-063429AA53AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
