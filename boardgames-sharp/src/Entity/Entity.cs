@@ -5,6 +5,7 @@ namespace boardgames_sharp.Entity;
 public interface IEntityReadOnly
 {
     public EntityId Id { get; }
+    bool try_and_get_value_of_type<T>(PropertyId<T> propertyId, out T? value);
     StateEntity get_state();
     IReadOnlyPropertiesOfType<T> get_readonly_properties_of_type<T>();
     IReadOnlyPropertiesOfSetOfType<T> get_readonly_properties_of_set_of_type<T>();
@@ -79,12 +80,32 @@ public class Entity(EntityId id): IEntityReadOnly
         
         throw new ArgumentException("Type not supported" + typeof(T).ToString());
     }
+    
+
+    public bool try_and_get_value_of_type<T>(PropertyId<T> propertyId, out T? value)
+    {
+        var properties = get_readonly_properties_of_type<T>();
+        var contains =  properties.Contains(propertyId);
+        if (!contains)
+        {
+            value = default;
+            return false;
+        }
+        var property = properties.get_read_only(propertyId);
+        value = property.CurrentValue();
+        return true;
+    }
 
     public StateEntity get_state()
     {
         var stateInt = _intProperties.get_state();
         var stateString = _stringProperties.get_state();
-        var stateEntity = new StateEntity(entityId:Id, intProperties:stateInt, stringProperties:stateString);
+        var stateSetsOfEntityId = _setOfEntitiesProperties.get_state(); 
+        var stateEntity = new StateEntity(
+            entityId:Id, intProperties:stateInt,
+            stringProperties:stateString,
+            setsOfEntityId:stateSetsOfEntityId
+            );
         return stateEntity;
 
     }
@@ -106,9 +127,10 @@ public class Entity(EntityId id): IEntityReadOnly
     }
 }
 
-public class StateEntity(EntityId entityId, StatePropertiesOfType<int> intProperties, StatePropertiesOfType<string>  stringProperties)
+public class StateEntity(EntityId entityId, StatePropertiesOfType<int> intProperties, StatePropertiesOfType<string>  stringProperties, StatePropertiesOfSetOfType<EntityId> setsOfEntityId)
 {
     public EntityId EntityId { get; } = entityId;
     public StatePropertiesOfType<int> IntProperties { get; } = intProperties;
     public StatePropertiesOfType<string> StringProperties { get; } = stringProperties;
+    public StatePropertiesOfSetOfType<EntityId> SetsOfEntityId { get; } = setsOfEntityId;
 }

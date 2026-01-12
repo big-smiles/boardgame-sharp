@@ -23,12 +23,19 @@ public static class CONSTANTS
         public const int CARD = 2;
     }
 
+    public static class CONTAINER_TYPES
+    {
+        public const int BOARD_TILE = 1;
+    }
     public static class PROPERTY_IDS
     {
         public static class INT
         {
             public static readonly PropertyId<int> ENTITY_TYPE = new PropertyId<int>(1);
             public static readonly PropertyId<int> CARD_LOCATION = new PropertyId<int>(2);
+            public static readonly PropertyId<int> BOARD_TILE_X = new PropertyId<int>(3);
+            public static readonly PropertyId<int> BOARD_TILE_Y = new PropertyId<int>(4);
+            public static readonly PropertyId<int> CONTAINER_TYPE = new PropertyId<int>(5);
         }
         public static class ENTITY_IDS
         {

@@ -7,7 +7,7 @@ using example_cardgame.Constants;
 
 namespace example_cardgame.Phases;
 
-public class InitializationPhase(List<ICardData> cardsOnPlayerDeck):IPhase
+public class InitializationPhase(List<ICardData> cardsOnPlayerDeck, int board_columns, int board_rows):IPhase
 {
     public bool Next(IActionStack actionStack)
     {
@@ -19,12 +19,18 @@ public class InitializationPhase(List<ICardData> cardsOnPlayerDeck):IPhase
     public void _do(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
     {
         var playerDeck = performer.Container.create_container();
-        performer.BasePerformer.Entity.save_entity(playerDeck.Id,CONSTANTS.KEY_ENTITY_IDS.PLAYER_DECK);
+        performer.BasePerformer.Entity.save_entity(playerDeck.Id, CONSTANTS.KEY_ENTITY_IDS.PLAYER_DECK);
         foreach (var cardData in cardsOnPlayerDeck)
         {
             performer.Card.create_card_on_player_deck(cardData);
         }
-        performer.BasePerformer.Phase.Pause();
+
+        for (var x = 0; x < board_columns; x++){
+            for (var y = 0; y < board_rows; y++)
+            {
+                performer.Board.create_board_tile(x, y);  
+            }
+        }
         performer.BasePerformer.GameState.PublishNew();
     }
 

@@ -1,5 +1,6 @@
 ﻿using boardgames_sharp.Actions;
 using boardgames_sharp.Actions.ActionPerformer;
+using boardgames_sharp.Entity;
 using example_cardgame.Card;
 using example_cardgame.Constants;
 
@@ -8,6 +9,7 @@ namespace example_cardgame.Action.Card;
 public interface ICardActionPerformer
 {
     ICard create_card_on_player_deck(ICardData cardData);
+    internal void set_card_location(EntityId entityId, ECardLocations location);
 }
 public sealed partial class CardActionPerformer(IActionPerformer basePerformer, ICardGameActionPerformer cardGamePerformer): ICardActionPerformer
 {
@@ -28,5 +30,10 @@ public sealed partial class CardActionPerformer(IActionPerformer basePerformer, 
         cardGamePerformer.Container.add_entity_to_container(card.EntityId, deckId);
         cardGamePerformer.BasePerformer.Entity.add_modifier_set_value(card.EntityId, CONSTANTS.PROPERTY_IDS.INT.CARD_LOCATION, (int)ECardLocations.Deck);
         return card;
+    }
+
+    public void set_card_location(EntityId entityId, ECardLocations location)
+    {
+        basePerformer.Entity.add_modifier_set_value(entityId, CONSTANTS.PROPERTY_IDS.INT.CARD_LOCATION, (int)location);
     }
 }

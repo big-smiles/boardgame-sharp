@@ -1,5 +1,6 @@
 ﻿using boardgames_sharp.Entity;
 using boardgames_sharp.GameState;
+using example_cardgame.Board;
 using example_cardgame.Card;
 using example_cardgame.Constants;
 
@@ -20,27 +21,57 @@ internal class GameStateObserver(IPublishCardGameState publisher):IObserver<IGam
 
     public void OnNext(IGameState value)
     {
-        List<ICard> cards = new List<ICard>();
+        var cards = new List<ICard>();
+        var boardTiles = new List<IBoardTile>();
         foreach (var tupleEntity in value.Entities.Entities)
         {
             var entity = tupleEntity.Item2;
-            var card =  tryConvertEntityToCard(entity);
+            var card =  _tryConvertEntityToCard(entity);
             if (card != null)
             {
                 cards.Add(card);
             }
+            var boardTile = _tryConvertEntityToBoardTile(entity);
+            if (boardTile != null)
+            {
+                boardTiles.Add(boardTile);
+            }
         }
-        var cardGameState = new CardGameState(cards);
+        var cardGameState = new CardGameState(cards, boardTiles);
         publisher.Publish(cardGameState);
     }
 
-    private ICard? tryConvertEntityToCard(StateEntity stateEntity)
+    private ICard? _tryConvertEntityToCard(StateEntity stateEntity)
     { 
         var entityType = stateEntity.IntProperties.Get(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE);
         if (entityType == CONSTANTS.ENTITY_TYPES.CARD)
         {
-            return new Card.Card(stateEntity);
+            return (ICard) new Card.Card(stateEntity);
             
+        }
+        else
+        {
+            return null;
+        }
+    }
+    private IBoardTile? _tryConvertEntityToBoardTile(StateEntity stateEntity)
+    { 
+        var entityType = stateEntity.IntProperties.Get(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE);
+        if (entityType == CONSTANTS.ENTITY_TYPES.CONTAINER)
+        {
+            var found = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE,
+                out var containterType);
+            if (!found)
+            {
+                return null;
+            }
+
+            if (containterType != CONSTANTS.CONTAINER_TYPES.BOARD_TILE)
+            {
+                return null;
+            }
+            
+            return new BoardTile(stateEntity);
         }
         else
         {

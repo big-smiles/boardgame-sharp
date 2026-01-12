@@ -71,4 +71,21 @@ public class StatePropertiesOfType<T>(List<Tuple<PropertyId<T>, T>> properties)
         }
         throw new KeyNotFoundException();
     }
+
+    public bool TryAndGet(PropertyId<T> propertyId, out T? value)
+    {
+        {
+            foreach (var tuple in Properties)
+            {
+                if (tuple.Item1 != propertyId)
+                {
+                    continue;
+                }
+                value = tuple.Item2;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+    }
 }

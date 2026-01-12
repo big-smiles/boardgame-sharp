@@ -16,6 +16,8 @@ public partial class ContainerActionPerformer:IContainerActionPerformer
             throw new InvalidEntityType(error);
         }
         var entity = baseActionPerformer.Entity.get_entity(entityId);
+        _remove_entity_from_parent(entity);
+
         var entityIdProperties = entity.get_readonly_properties_of_type<EntityId>();
         //if this entity was never added to a contianer before we
         //might need to add the property to track parents
@@ -40,5 +42,16 @@ public partial class ContainerActionPerformer:IContainerActionPerformer
             entityId
         );
         
+    }
+
+    private void _remove_entity_from_parent(IEntityReadOnly entity)
+    {
+        var entityIdProperties = entity.get_readonly_properties_of_type<EntityId>();
+        if (!entityIdProperties.Contains(CONSTANTS.PROPERTY_IDS.ENTITY_IDS.CONTAINER_PARENT))
+        {
+            return;
+        }
+        var parentId = entityIdProperties.get_read_only(CONSTANTS.PROPERTY_IDS.ENTITY_IDS.CONTAINER_PARENT);
+          
     }
 }
