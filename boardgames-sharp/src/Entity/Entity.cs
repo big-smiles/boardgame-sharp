@@ -20,6 +20,8 @@ public interface IEntityReadOnly
     IReadOnlyPropertiesOfType<string> StringProperties { get; }
     IReadOnlyPropertiesOfType<EntityId> EntityIdProperties { get; }
     IReadOnlyPropertiesOfSet<EntityId> SetOfEntityIdProperties { get; }
+    IReadOnlyPropertiesOfDictionary<EntityId,int> DictOfEntityIdToIntProperties { get; }
+    IReadOnlyPropertiesOfDictionary<EntityId,float> DictOfEntityIdToFloatProperties { get; }
         
     IReadOnlyPropertiesOfDictionary<Tuple<int, int>, EntityId> GridOfEntityIdProperties { get; }
 }
@@ -40,6 +42,15 @@ public class Entity(EntityId id): IEntityReadOnly
     
     private readonly PropertiesOfSet<EntityId> _setOfEntitiesProperties =  new();
     public IReadOnlyPropertiesOfSet<EntityId> SetOfEntityIdProperties => _setOfEntitiesProperties;
+    
+    private readonly PropertiesOfDictionary<EntityId,int>  _dictOfEntityIdToIntProperties =  new();
+    public IReadOnlyPropertiesOfDictionary<EntityId, int> DictOfEntityIdToIntProperties =>
+        _dictOfEntityIdToIntProperties;
+    
+    private readonly PropertiesOfDictionary<EntityId,float>  _dictOfEntityIdToFloatProperties =  new();
+
+    public IReadOnlyPropertiesOfDictionary<EntityId, float> DictOfEntityIdToFloatProperties =>
+        _dictOfEntityIdToFloatProperties;
 
     private readonly PropertiesOfDictionary<Tuple<int, int>, EntityId> _gridOfEntityIdProperties =  new();
     public IReadOnlyPropertiesOfDictionary<Tuple<int, int>, EntityId> GridOfEntityIdProperties =>
@@ -56,7 +67,7 @@ public class Entity(EntityId id): IEntityReadOnly
     
     private readonly PropertiesOfType<EntityId> _entityId = new(EntityManager.ZeroValueEntityId);
     public IReadOnlyPropertiesOfType<EntityId> EntityIdProperties => _entityId;
-
+    
 
     public IReadOnlyPropertiesOfType<T> get_readonly_properties_of_type<T>()
     {
@@ -89,8 +100,17 @@ public class Entity(EntityId id): IEntityReadOnly
     {
         if (typeof(T) == typeof(EntityId) && typeof(KT) ==  typeof(Tuple<int,int>))
         {
-            return this._gridOfEntityIdProperties as PropertiesOfDictionary<KT,T> ?? throw new InvalidOperationException();
+            return _gridOfEntityIdProperties as PropertiesOfDictionary<KT,T> ?? throw new InvalidOperationException();
         }
+        if (typeof(T) == typeof(int) && typeof(KT) ==  typeof(EntityId))
+        {
+            return _dictOfEntityIdToIntProperties as PropertiesOfDictionary<KT,T> ?? throw new InvalidOperationException();
+        }
+        if (typeof(T) == typeof(float) && typeof(KT) ==  typeof(EntityId))
+        {
+            return _dictOfEntityIdToFloatProperties as PropertiesOfDictionary<KT,T> ?? throw new InvalidOperationException();
+        }
+
         throw new ArgumentException("Type not supported");
         
     }
@@ -174,10 +194,15 @@ public class Entity(EntityId id): IEntityReadOnly
         var stateInt = _intProperties.get_state();
         var stateString = _stringProperties.get_state();
         var stateSetsOfEntityId = _setOfEntitiesProperties.get_state(); 
+        var dictOfEntityIdToInt =  _dictOfEntityIdToIntProperties.get_state();
+        var dictOfEntityIdToFloat =  _dictOfEntityIdToFloatProperties.get_state();
         var stateEntity = new StateEntity(
-            entityId:Id, intProperties:stateInt,
+            entityId:Id,
+            intProperties:stateInt,
             stringProperties:stateString,
-            setsOfEntityId:stateSetsOfEntityId
+            setsOfEntityId:stateSetsOfEntityId,
+            dictOfEntityIdToIntProperties: dictOfEntityIdToInt,
+            dictOfEntityIdToFloatProperties: dictOfEntityIdToFloat
             );
         return stateEntity;
 
@@ -205,10 +230,19 @@ public class Entity(EntityId id): IEntityReadOnly
     }
 }
 
-public class StateEntity(EntityId entityId, StatePropertiesOfType<int> intProperties, StatePropertiesOfType<string>  stringProperties, StatePropertiesOfSetOfType<EntityId> setsOfEntityId)
+public class StateEntity(
+    EntityId entityId,
+    StatePropertiesOfType<int> intProperties,
+    StatePropertiesOfType<string>  stringProperties,
+    StatePropertiesOfSet<EntityId> setsOfEntityId,
+    StatePropertiesOfDictionary<EntityId, int> dictOfEntityIdToIntProperties,
+    StatePropertiesOfDictionary<EntityId, float> dictOfEntityIdToFloatProperties
+)
 {
     public EntityId EntityId { get; } = entityId;
     public StatePropertiesOfType<int> IntProperties { get; } = intProperties;
     public StatePropertiesOfType<string> StringProperties { get; } = stringProperties;
-    public StatePropertiesOfSetOfType<EntityId> SetsOfEntityId { get; } = setsOfEntityId;
+    public StatePropertiesOfSet<EntityId> SetsOfEntityId { get; } = setsOfEntityId;
+    public StatePropertiesOfDictionary<EntityId,int> DictOfEntityIdToIntProperties { get; } = dictOfEntityIdToIntProperties;
+    public StatePropertiesOfDictionary<EntityId,float> DictOfEntityIdToFloatProperties { get; } = dictOfEntityIdToFloatProperties;
 }

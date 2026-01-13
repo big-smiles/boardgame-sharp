@@ -1,6 +1,8 @@
 ﻿using boardgames_sharp.Actions;
 using boardgames_sharp.Entity;
 using boardgames_sharp.Player;
+using example_cardgame.Card;
+using example_cardgame.NDeck;
 
 namespace example_cardgame.Constants;
 
@@ -32,6 +34,12 @@ public static class CONSTANTS
         public const int CARD_DECK = 2;
         public const int BOARD = 3;
     }
+
+    public static class DECK_TYPES
+    {
+        public const int DECK_OF_CARDS = 1;
+        public const int DECK_OF_DECKS = 2;
+    }
     public static class PROPERTY_IDS
     {
         public static class INT
@@ -43,6 +51,9 @@ public static class CONSTANTS
             public static readonly PropertyId<int> CONTAINER_TYPE = new PropertyId<int>(5);
             public static readonly PropertyId<int> PLAYER_HEALTH = new PropertyId<int>(6);
             public static readonly PropertyId<int> CAN_BE_PLAYED_COOLDOWN = new PropertyId<int>(7);
+            public static readonly PropertyId<int> CAN_BE_PLAYED_CURRENT_COOLDOWN = new PropertyId<int>(8);
+            public static readonly PropertyId<int> DECK_TYPE = new PropertyId<int>(9);
+            public static readonly PropertyId<int> WEIGHTED_CHOICE_AMOUNT = new PropertyId<int>(10);
         }
         public static class ENTITY_IDS
         {
@@ -74,6 +85,14 @@ public static class CONSTANTS
         public static class IDICTIONARY
         {
             public static readonly PropertyId<IDictionary<Tuple<int, int>, EntityId>> BOARD_TILES = new(1);
+            public static readonly PropertyId<IDictionary<EntityId, int>> DECK_AMOUNT = new(2);
+            public static readonly PropertyId<IDictionary<EntityId, float>> DECK_WEIGHT = new(3);
+        }
+
+        public static class FLOAT
+        {
+            public static readonly PropertyId<float> WEIGHTED_CHOICE_WEIGHT = new PropertyId<float>(1);
+
         }
     }
     

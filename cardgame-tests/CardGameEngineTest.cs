@@ -6,6 +6,7 @@ using example_cardgame;
 using example_cardgame.Action;
 using example_cardgame.Card;
 using example_cardgame.Constants;
+using example_cardgame.NDeck;
 using example_cardgame.Phases;
 using JetBrains.Annotations;
 namespace cardgame_tests;
@@ -18,12 +19,14 @@ public sealed class CardGameEngineTest
     public void CreateOneCardInDeck()
     {
         var cardname = "card1";
-        var card1 = new CardData()
+        var card1 = new WeightedChoice<CardData>( new CardData()
         {
             Name = cardname,
-        };
-        var cards = new List<ICardData>() { card1 };
-        var phases = new InitializationPhase(cards,0,0);
+        },
+            1,1);
+        IReadOnlyList<WeightedChoice<CardData>> cards = new List<WeightedChoice<CardData>>() { card1 };
+        var deckData = new DeckData(cards);
+        var phases = new InitializationPhase(deckData,0,0);
         CardGameEngine engine = new CardGameEngine(phases);
         var count = 0;
         var observer = new TestObserver(
@@ -57,16 +60,17 @@ public sealed class CardGameEngineTest
         var cardname1 = "card1";
         var cardname2 = "card2";
         HashSet<string> names = new HashSet<string>(){ cardname1, cardname2 };
-        var card1 = new CardData()
+        var card1 = new WeightedChoice<CardData>(new CardData()
         {
             Name = cardname1,
-        };
-        var card2 = new CardData()
+        },0.5f,1);
+        var card2 = new WeightedChoice<CardData>(new CardData()
         {
             Name = cardname2,
-        };
-        var cards = new List<ICardData>() { card1, card2 };
-        var phases = new InitializationPhase(cards,0,0);
+        },0.5f,1);;
+        IReadOnlyList<WeightedChoice<CardData>> cards = new List<WeightedChoice<CardData>>() { card1, card2 };
+        var deckData = new DeckData(cards);
+        var phases = new InitializationPhase(deckData,0,0);
         CardGameEngine engine = new CardGameEngine(phases);
         var count = 0;
         var observer = new TestObserver(
@@ -109,16 +113,17 @@ public sealed class CardGameEngineTest
         var cardname1 = "card1";
         var cardname2 = "card2";
         HashSet<string> names = new HashSet<string>(){ cardname1, cardname2 };
-        var card1 = new CardData()
+        var card1 = new WeightedChoice<CardData>(new CardData()
         {
             Name = cardname1,
-        };
-        var card2 = new CardData()
+        }, 0.5f, 1);
+        var card2 = new WeightedChoice<CardData>(new CardData()
         {
             Name = cardname2,
-        };
-        var cards = new List<ICardData>() { card1, card2 };
-        var intializationPhase = new InitializationPhase(cards,3,3);
+        }, 0.5f, 1);
+        IReadOnlyList<WeightedChoice<CardData>> cards = new List<WeightedChoice<CardData>>() { card1, card2 };
+        var deckData = new DeckData(cards);
+        var intializationPhase = new InitializationPhase(deckData,3,3);
 
         var movePhase = new TestPhase(new CardGameAction(
             doAction:((performer, ids) =>

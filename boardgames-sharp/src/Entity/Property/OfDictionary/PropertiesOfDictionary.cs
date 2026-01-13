@@ -3,8 +3,9 @@
 public interface IReadOnlyPropertiesOfDictionary<TK,T> where TK: notnull
 {
     IPropertyOfDictionaryReadOnly<TK,T> get_read_only(PropertyId<IDictionary<TK,T>> propertyId);
+    bool TryAndGet(PropertyId<IDictionary<TK,T>> propertyId, out IReadOnlyDictionary<TK,T>? value);
     bool Contains(PropertyId<IDictionary<TK,T>> propertyId);
-    StatePropertiesOfDictionaryOfType<TK, T> get_state();
+    StatePropertiesOfDictionary<TK, T> get_state();
 }
 
 public class PropertiesOfDictionary<TK, T>(): IReadOnlyPropertiesOfDictionary<TK, T> where TK : notnull
@@ -23,6 +24,17 @@ public class PropertiesOfDictionary<TK, T>(): IReadOnlyPropertiesOfDictionary<TK
         var property = this.Get(propertyId);
         return property as IPropertyOfDictionaryReadOnly<TK,T>;    }
 
+    public bool TryAndGet(PropertyId<IDictionary<TK,T>> propertyId, out IReadOnlyDictionary<TK,T>? value)
+    {
+        if (_properties.TryGetValue(propertyId, out var property))
+        {
+             value = property.CurrentValue();
+             return true;
+        }
+        value = default;
+        return false;
+    }
+
     public bool Contains(PropertyId<IDictionary<TK, T>> propertyId)
     {
         return _properties.ContainsKey(propertyId);
@@ -38,7 +50,7 @@ public class PropertiesOfDictionary<TK, T>(): IReadOnlyPropertiesOfDictionary<TK
     }
     
 
-    public StatePropertiesOfDictionaryOfType<TK,T> get_state()
+    public StatePropertiesOfDictionary<TK,T> get_state()
     {
         var states = new List<Tuple<PropertyId<IDictionary<TK,T>>, IReadOnlyDictionary<TK,T>>>();
         foreach (var kvp in _properties)
@@ -46,14 +58,14 @@ public class PropertiesOfDictionary<TK, T>(): IReadOnlyPropertiesOfDictionary<TK
             var value = kvp.Value.CurrentValue();
             states.Add(new Tuple<PropertyId<IDictionary<TK, T>>, IReadOnlyDictionary<TK,T>>(kvp.Key, value));
         }
-        return new StatePropertiesOfDictionaryOfType<TK,T>(states);
+        return new StatePropertiesOfDictionary<TK,T>(states);
     }
 
   
 }
 
 
-public class StatePropertiesOfDictionaryOfType<TK,T>(List<Tuple<PropertyId<IDictionary<TK,T>>, IReadOnlyDictionary<TK,T>>> properties) where TK: notnull
+public class StatePropertiesOfDictionary<TK,T>(List<Tuple<PropertyId<IDictionary<TK,T>>, IReadOnlyDictionary<TK,T>>> properties) where TK: notnull
 {
     public List<Tuple<PropertyId<IDictionary<TK,T>>, IReadOnlyDictionary<TK,T>>> Properties { get; } = properties;
     

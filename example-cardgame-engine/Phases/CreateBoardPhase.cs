@@ -14,7 +14,7 @@ public class CreateBoardPhase(int boardColumns, int boardRows):IPhase
         actionStack.AddPhaseAction(new CardGameAction(_do, _undo));
         return false;
     }
-    private void _do(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _do(ICardGameActionPerformer performer, ActionContext context)
     {
         performer.Board.create_board();
         for (var x = 0; x < boardColumns; x++){
@@ -24,7 +24,7 @@ public class CreateBoardPhase(int boardColumns, int boardRows):IPhase
             }
         }    
     }
-    private void _undo(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _undo(ICardGameActionPerformer performer, ActionContext context)
     {
         throw new NotImplementedException();
     }

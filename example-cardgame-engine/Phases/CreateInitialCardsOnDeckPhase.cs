@@ -3,10 +3,11 @@ using boardgames_sharp.Phases;
 using boardgames_sharp.Stack;
 using example_cardgame.Action;
 using example_cardgame.Card;
+using example_cardgame.NDeck;
 
 namespace example_cardgame.Phases;
 
-public class CreateInitialCardsOnDeckPhase(List<ICardData> cardsOnPlayerDeck):IPhase
+public class CreateInitialCardsOnDeckPhase(DeckData deckData):IPhase
 {
     public bool Next(IActionStack actionStack)
     {
@@ -14,15 +15,14 @@ public class CreateInitialCardsOnDeckPhase(List<ICardData> cardsOnPlayerDeck):IP
         return false;
     }
 
-    private void _do(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _do(ICardGameActionPerformer performer, ActionContext context)
     {
-        foreach (var cardData in cardsOnPlayerDeck)
-        {
-            performer.Card.create_card_on_player_deck(cardData);
-        }
+        
+            performer.Deck.create_deck(deckData);
+        
     }
 
-    private void _undo(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _undo(ICardGameActionPerformer performer, ActionContext context)
     {
         throw new NotImplementedException();
     }

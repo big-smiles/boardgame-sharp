@@ -4,18 +4,17 @@ using boardgames_sharp.Stack;
 using example_cardgame.Action;
 using example_cardgame.Card;
 using example_cardgame.Constants;
+using example_cardgame.NDeck;
 
 namespace example_cardgame.Phases;
 
 public class InitializationPhase:IPhase
 {
-    public InitializationPhase(List<ICardData> cardsOnPlayerDeck, int board_columns, int board_rows)
+    public InitializationPhase(DeckData deckData, int board_columns, int board_rows)
     {
-        var create_player_deck = new CreateDeckPhase();
-        var create_initial_cards_on_deck = new CreateInitialCardsOnDeckPhase(cardsOnPlayerDeck);
+        var create_initial_cards_on_deck = new CreateInitialCardsOnDeckPhase(deckData);
         var create_board = new CreateBoardPhase(board_columns, board_rows);
         _phaseGroup = new PhaseGroup([
-            create_player_deck,
             create_initial_cards_on_deck,
             create_board
         ], false);
@@ -34,12 +33,12 @@ public class InitializationPhase:IPhase
         return false;
     }
 
-    private void _do(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _do(ICardGameActionPerformer performer, ActionContext context)
     {
         performer.BasePerformer.GameState.PublishNew();
     }
 
-    private void _undo(ICardGameActionPerformer performer, HashSet<EntityId> entityIds)
+    private void _undo(ICardGameActionPerformer performer, ActionContext context)
     {
         throw new NotImplementedException();  
     }

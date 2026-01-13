@@ -20,7 +20,7 @@ public class PlayerTurnPhase(uint playerId):IPhase
     
     private class Action(uint playerId): IAction
     {
-        public void Do(IActionPerformer actionPerformer, HashSet<EntityId> entityIds)
+        public void Do(IActionPerformer actionPerformer, ActionContext context)
         {
             var entities = actionPerformer.Entity.query_entity_ids(_queryEmptyCells);
             var action = new ActionAfterInteraction(playerId);
@@ -34,21 +34,22 @@ public class PlayerTurnPhase(uint playerId):IPhase
             actionPerformer.GameState.PublishNew();
         }
         
-        public void Undo(IActionPerformer actionPerformer, HashSet<EntityId> entityIds)
+        public void Undo(IActionPerformer actionPerformer, ActionContext context)
         {
             throw new NotImplementedException();
         }
         private class ActionAfterInteraction(uint playerId) : IAction
         {
-            public void Do(IActionPerformer performer, HashSet<EntityId> entityIds)
+            public void Do(IActionPerformer performer, ActionContext context)
             {
-                if (entityIds.Count != 1)
+                
+                if (context.Targets == null || context.Targets.Count != 1)
                 {
                     throw new Exception("there should be only 1 entityId selected");
                     
                 }
                 performer.Interaction.clear_available_interactions();
-                var entity = entityIds.First();
+                var entity = context.Targets.First();
                 var value = playerId == Constants.ValuePlayer1?Constants.ValuePlayer1:Constants.ValuePlayer2;
                 var modifier = new ModifierSetValue<int>(value);
                 performer.Entity.add_modifier(entity, Constants.ValueIntPropertyId, modifier);
@@ -62,7 +63,7 @@ public class PlayerTurnPhase(uint playerId):IPhase
                 
             }
 
-            public void Undo(IActionPerformer actionPerformer, HashSet<EntityId> entityIds)
+            public void Undo(IActionPerformer actionPerformer, ActionContext context)
             {
                 throw new NotImplementedException();
             }

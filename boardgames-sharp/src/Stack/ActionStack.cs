@@ -1,13 +1,16 @@
 ﻿using boardgames_sharp.Actions;
 using boardgames_sharp.Actions.ActionPerformer;
 using boardgames_sharp.Entity;
+using boardgames_sharp.Player;
 
 namespace boardgames_sharp.Stack;
 
 public interface IActionStack
 {
     public void AddPhaseAction(IAction action);
-    public void AddInteractionAction(IAction action, HashSet<EntityId> entities);
+    public void AddInteractionAction(IAction action, IReadOnlySet<EntityId> selectedEntityIds);
+    public void AddActionFromPerformer(IAction action,PlayerId? owner, EntityId? source, IReadOnlySet<EntityId> targets);
+    
 }
 internal sealed class ActionStack: IInitializeWithEngineRoot, IActionStack
 {
@@ -19,12 +22,29 @@ internal sealed class ActionStack: IInitializeWithEngineRoot, IActionStack
 
     public void AddPhaseAction(IAction action)
     {
-        AddInteractionAction(action, []);
+        var context = new ActionContext(null, null, null);
+        AddAction(action, context);
     }
 
-    public void AddInteractionAction(IAction action, HashSet<EntityId> entities)
+    public void AddInteractionAction(IAction action, IReadOnlySet<EntityId> selectedEntityIds)
     {
-        _stack.Push(new Tuple<IAction, HashSet<EntityId>>(action, entities));
+        var context = new ActionContext(selectedEntityIds, null, null);
+        AddAction(action, context);
+    }
+
+    public void AddActionFromPerformer(IAction action, PlayerId? owner, EntityId? source, IReadOnlySet<EntityId> targets)
+    {
+        var context = new ActionContext(
+            targets:targets,
+            owner:owner,
+            source:source
+        );
+        AddAction(action, context);
+    }
+
+    private void AddAction(IAction action, ActionContext context)
+    {
+        _stack.Push(new Tuple<IAction, ActionContext>(action, context));
         if (_isRunning) return;
         _isRunning = true;
         _run();
@@ -51,7 +71,20 @@ internal sealed class ActionStack: IInitializeWithEngineRoot, IActionStack
         }
     }
     private IActionPerformer? _actionPerformer;
-    private readonly Stack<Tuple<IAction,HashSet<EntityId>>> _stack = new();
+    private readonly Stack<Tuple<IAction,ActionContext>> _stack = new();
     private bool _isRunning = false;
     private EngineRoot? _root;
 }
+
+public readonly record struct ActionContext
+{
+    public readonly IReadOnlySet<EntityId>? Targets;
+    public readonly EntityId? Source;
+    public readonly PlayerId? Owner;
+    public ActionContext( IReadOnlySet<EntityId>? targets, PlayerId? owner, EntityId? source)
+    {
+        Owner = owner;
+        Source = source;
+        Targets = targets;
+    }
+}  

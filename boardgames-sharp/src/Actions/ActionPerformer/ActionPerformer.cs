@@ -1,4 +1,5 @@
-﻿using boardgames_sharp.Actions.ActionPerformer.Entity;
+﻿using boardgames_sharp.Actions.ActionPerformer.Action;
+using boardgames_sharp.Actions.ActionPerformer.Entity;
 using boardgames_sharp.Actions.ActionPerformer.GameState;
 using boardgames_sharp.Actions.ActionPerformer.Interaction;
 using boardgames_sharp.Actions.ActionPerformer.Phase;
@@ -13,6 +14,7 @@ public interface IActionPerformer
     IInteractionActionPerformer Interaction { get; }
     IPhaseActionPerformer Phase { get; }
     IPlayerActionPerformer Player { get; }
+    IStackActionPerformer Stack { get; }
 }
 internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRoot
 {
@@ -23,6 +25,7 @@ internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRo
         this._interaction.initialize(engineRoot);
         _phase.initialize(engineRoot);
         _player.initialize(engineRoot);
+        _stack.initialize(engineRoot);
     }
 
     private readonly EntityActionPerformer _entity = new();
@@ -35,4 +38,6 @@ internal sealed class ActionPerformer: IActionPerformer, IInitializeWithEngineRo
     public IPhaseActionPerformer Phase => _phase;
     private  readonly PlayerActionPerformer _player = new();
     public IPlayerActionPerformer Player => _player;
+    private readonly StackActionPerformer _stack = new();
+    public IStackActionPerformer Stack => _stack;
 }

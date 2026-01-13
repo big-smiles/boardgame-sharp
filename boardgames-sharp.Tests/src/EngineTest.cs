@@ -147,10 +147,11 @@ public class EngineTest
                         min:1,
                         max:2, 
                         actionWhenSelected:new TestAction(
-                            @do: (actionPerformer, ids) =>
+                            @do: (actionPerformer, context) =>
                             {
-                                Assert.HasCount(1, ids);
-                                var entityId = ids.First();
+                                Assert.IsNotNull(context.Targets);
+                                Assert.HasCount(1, context.Targets);
+                                var entityId = context.Targets.First();
                                 var intPropertyId = new PropertyId<int>(propertyIdValue);
                                 var modifier = new ModifierSetValue<int>(propertyValue);
                                 performer.Entity.add_modifier(entityId, intPropertyId, modifier);

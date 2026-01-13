@@ -4,7 +4,7 @@ public interface IReadOnlyPropertiesOfSet<T>
 {
     IPropertyOfSetReadOnly<T> get_read_only(PropertyId<ISet<T>> propertyId);
     bool Contains(PropertyId<ISet<T>> propertyId);
-    StatePropertiesOfSetOfType<T> get_state();
+    StatePropertiesOfSet<T> get_state();
 }
 public class PropertiesOfSet<T>(): IReadOnlyPropertiesOfSet<T>
 {
@@ -37,7 +37,7 @@ public class PropertiesOfSet<T>(): IReadOnlyPropertiesOfSet<T>
         throw new KeyNotFoundException();
     }
 
-    public StatePropertiesOfSetOfType<T> get_state()
+    public StatePropertiesOfSet<T> get_state()
     {
         var states = new List<Tuple<PropertyId<ISet<T>>, IReadOnlySet<T>>>();
         foreach (var kvp in _properties)
@@ -45,12 +45,12 @@ public class PropertiesOfSet<T>(): IReadOnlyPropertiesOfSet<T>
             var value = kvp.Value.CurrentValue();
             states.Add(new Tuple<PropertyId<ISet<T>>, IReadOnlySet<T>>(kvp.Key, value));
         }
-        return new StatePropertiesOfSetOfType<T>(states);
+        return new StatePropertiesOfSet<T>(states);
     }
 }
 
 
-public class StatePropertiesOfSetOfType<T>(List<Tuple<PropertyId<ISet<T>>, IReadOnlySet<T>>> properties)
+public class StatePropertiesOfSet<T>(List<Tuple<PropertyId<ISet<T>>, IReadOnlySet<T>>> properties)
 {
     public List<Tuple<PropertyId<ISet<T>>, IReadOnlySet<T>>> Properties { get; } = properties;
     

@@ -2,20 +2,21 @@
 using boardgames_sharp.Actions;
 using boardgames_sharp.Actions.ActionPerformer;
 using boardgames_sharp.Entity;
+using boardgames_sharp.Stack;
 
 namespace boardgames_sharp.Tests;
 
 
 internal class Action(DAction @do, DAction undo) : IAction
 {
-    public void Do(IActionPerformer actionPerformer, HashSet<EntityId>  ids)
+    public void Do(IActionPerformer actionPerformer, ActionContext context)
     {
-        @do(actionPerformer, ids);
+        @do(actionPerformer, context);
     }
 
-    public void Undo(IActionPerformer actionPerformer, HashSet<EntityId>  ids)
+    public void Undo(IActionPerformer actionPerformer, ActionContext context)
     {
-        undo(actionPerformer, ids);
+        undo(actionPerformer, context);
     }
 } 
-internal delegate void DAction(IActionPerformer actionPerformer, HashSet<EntityId>  ids);
+internal delegate void DAction(IActionPerformer actionPerformer, ActionContext context);

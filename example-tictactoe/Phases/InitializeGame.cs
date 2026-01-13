@@ -18,7 +18,7 @@ public class InitializeGamePhase():IPhase
     
     private class Action: IAction
     {
-        public void Do(IActionPerformer actionPerformer, HashSet<EntityId> entityIds)
+        public void Do(IActionPerformer actionPerformer, ActionContext context)
         {
             CreateEntity(actionPerformer,1,1);
             CreateEntity(actionPerformer,1,2);
@@ -31,7 +31,7 @@ public class InitializeGamePhase():IPhase
             CreateEntity(actionPerformer,3,3);
         }
 
-        public void Undo(IActionPerformer actionPerformer, HashSet<EntityId> entityIds)
+        public void Undo(IActionPerformer actionPerformer, ActionContext context)
         {
             throw new NotImplementedException();
         }
