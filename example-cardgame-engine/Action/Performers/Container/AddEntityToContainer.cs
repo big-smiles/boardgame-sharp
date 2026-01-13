@@ -10,12 +10,12 @@ public partial class ContainerActionPerformer:IContainerActionPerformer
 {
     public void add_entity_to_container(EntityId entityId, EntityId containerId)
     {
-        var container = baseActionPerformer.Entity.get_entity(containerId);
+        var container = performer.BasePerformer.Entity.get_entity(containerId);
         if (!_checkEntityIsContainer(container, out var error))
         {
             throw new InvalidEntityType(error);
         }
-        var entity = baseActionPerformer.Entity.get_entity(entityId);
+        var entity = performer.BasePerformer.Entity.get_entity(entityId);
         _remove_entity_from_parent(entity);
 
         var entityIdProperties = entity.get_readonly_properties_of_type<EntityId>();
@@ -23,20 +23,20 @@ public partial class ContainerActionPerformer:IContainerActionPerformer
         //might need to add the property to track parents
         if (!entityIdProperties.Contains(CONSTANTS.PROPERTY_IDS.ENTITY_IDS.CONTAINER_PARENT))
         {
-            baseActionPerformer.Entity.add_property(
+            performer.BasePerformer.Entity.add_property(
                 entityId,
                 CONSTANTS.PROPERTY_IDS.ENTITY_IDS.CONTAINER_PARENT
             );
         }
         //we set the parent on entityId
         var modifierContainerParent = new ModifierSetValue<EntityId>(containerId);
-        baseActionPerformer.Entity.add_modifier(
+        performer.BasePerformer.Entity.add_modifier(
             entityId,
             CONSTANTS.PROPERTY_IDS.ENTITY_IDS.CONTAINER_PARENT,
             modifierContainerParent
         );
         //we add entityId as childer on the container
-        baseActionPerformer.Entity.PropertiesOfSet.add_element<EntityId>(
+        performer.BasePerformer.Entity.PropertiesOfSet.add_element<EntityId>(
             containerId, 
             CONSTANTS.PROPERTY_IDS.ISET.ENTITY_ID.CONTAINER_CHILDREN,
             entityId

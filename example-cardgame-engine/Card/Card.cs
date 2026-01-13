@@ -15,12 +15,18 @@ public interface ICard
     string Name { get; }
     EntityId EntityId { get; }
     public ECardLocations CardLocation { get; }
+    ICanBePlayed? CanBePlayed { get; }
 }
 
 public interface ICardData
 {
     string Name{ get; }
-    CardGameAction OnPlay { get; }
+    ICanBePlayedData? CanBePlayed { get; }
+}
+public class CardData:ICardData
+{
+    public string Name { get; set; }
+    public ICanBePlayedData? CanBePlayed { get; set; }
 }
 
 public class Card:ICard
@@ -54,5 +60,6 @@ public class Card:ICard
     public string Name { get; }
     public EntityId EntityId { get; }
     public ECardLocations CardLocation { get; }
+    public ICanBePlayed? CanBePlayed { get; }
 }
 

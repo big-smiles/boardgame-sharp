@@ -8,18 +8,19 @@ public record struct PropertyId<T>(ulong Id)
 public interface IReadOnlyPropertiesOfType<T>
 {
     IPropertyReadOnly<T> get_read_only(PropertyId<T> propertyId);
+    bool TryAndGet(PropertyId<T> propertyId, out T? value);
     bool Contains(PropertyId<T> propertyId);
     StatePropertiesOfType<T> get_state();
 }
 public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
 {
-    private readonly Dictionary<PropertyId<T>, Property<T>> _properties = new();
+    private readonly Dictionary<PropertyId<T>, PropertyOfType<T>> _properties = new();
 
-    public Property<T> Add(PropertyId<T> propertyId) => Add(propertyId, zeroValue);
+    public PropertyOfType<T> Add(PropertyId<T> propertyId) => Add(propertyId, zeroValue);
    
-    public Property<T> Add(PropertyId<T> propertyId, T value)
+    public PropertyOfType<T> Add(PropertyId<T> propertyId, T value)
     {
-        var property = new Property<T>(value);
+        var property = new PropertyOfType<T>(value);
         _properties.Add(propertyId, property);
         return property;
     }
@@ -29,12 +30,24 @@ public class PropertiesOfType<T>(T zeroValue): IReadOnlyPropertiesOfType<T>
         return property as IPropertyReadOnly<T>;
     }
 
+    public bool TryAndGet(PropertyId<T> propertyId, out T? value)
+    {
+        if (!this.Contains(propertyId))
+        {
+            value = default;
+            return false;
+        }
+
+        value = this.Get(propertyId).CurrentValue();
+        return true;
+    }
+
     public bool Contains(PropertyId<T> propertyId)
     {
         return _properties.ContainsKey(propertyId);
     }
 
-    public Property<T> Get(PropertyId<T> propertyId)
+    public PropertyOfType<T> Get(PropertyId<T> propertyId)
     {
         if (_properties.TryGetValue(propertyId, out var property))
         {

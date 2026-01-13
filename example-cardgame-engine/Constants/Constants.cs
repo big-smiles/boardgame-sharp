@@ -16,16 +16,21 @@ public static class CONSTANTS
         public const int PLAYER_HAND = 2;
         public const int PLAYER_BOARD = 3;
         public const int PLAYER_DISCARD = 4;
+        public const int PLAYER_CHARACTER = 5;
+        public const int BOARD = 6;
     }
     public static class ENTITY_TYPES
     {
         public const int CONTAINER = 1;
         public const int CARD = 2;
+        public const int PLAYER_CHARACTER = 3;
     }
 
     public static class CONTAINER_TYPES
     {
         public const int BOARD_TILE = 1;
+        public const int CARD_DECK = 2;
+        public const int BOARD = 3;
     }
     public static class PROPERTY_IDS
     {
@@ -36,6 +41,8 @@ public static class CONSTANTS
             public static readonly PropertyId<int> BOARD_TILE_X = new PropertyId<int>(3);
             public static readonly PropertyId<int> BOARD_TILE_Y = new PropertyId<int>(4);
             public static readonly PropertyId<int> CONTAINER_TYPE = new PropertyId<int>(5);
+            public static readonly PropertyId<int> PLAYER_HEALTH = new PropertyId<int>(6);
+            public static readonly PropertyId<int> CAN_BE_PLAYED_COOLDOWN = new PropertyId<int>(7);
         }
         public static class ENTITY_IDS
         {
@@ -57,6 +64,16 @@ public static class CONSTANTS
             {
                 public static readonly PropertyId<ISet<EntityId>> CONTAINER_CHILDREN = new PropertyId<ISet<EntityId>>(1);
             }
+        }
+
+        public static class BOOL
+        {
+            public static readonly PropertyId<bool> HAS_CAN_BE_PLAYED = new PropertyId<bool>(1);
+        }
+
+        public static class IDICTIONARY
+        {
+            public static readonly PropertyId<IDictionary<Tuple<int, int>, EntityId>> BOARD_TILES = new(1);
         }
     }
     

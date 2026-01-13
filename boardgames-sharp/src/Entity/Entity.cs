@@ -6,9 +6,22 @@ public interface IEntityReadOnly
 {
     public EntityId Id { get; }
     bool try_and_get_value_of_type<T>(PropertyId<T> propertyId, out T? value);
+    bool try_and_get_value_of_set<T>(PropertyId<ISet<T>> propertyId, out IReadOnlySet<T>? value);
+    bool try_and_get_value_of_dictionary<KT,T>(PropertyId<IDictionary<KT,T>> propertyId, out IReadOnlyDictionary<KT,T>? value) where KT: notnull;
     StateEntity get_state();
     IReadOnlyPropertiesOfType<T> get_readonly_properties_of_type<T>();
-    IReadOnlyPropertiesOfSetOfType<T> get_readonly_properties_of_set_of_type<T>();
+    IReadOnlyPropertiesOfSet<T> get_readonly_properties_of_set<T>();
+    IReadOnlyPropertiesOfDictionary<KT,T> get_readonly_properties_of_dictionary<KT, T>() where KT: notnull;
+    
+    IReadOnlyPropertiesOfType<int> IntProperties { get; }
+    IReadOnlyPropertiesOfType<IAction?> ActionProperties { get; }
+    IReadOnlyPropertiesOfType<bool> BoolProperties { get; }
+    IReadOnlyPropertiesOfType<float> FloatProperties { get; }
+    IReadOnlyPropertiesOfType<string> StringProperties { get; }
+    IReadOnlyPropertiesOfType<EntityId> EntityIdProperties { get; }
+    IReadOnlyPropertiesOfSet<EntityId> SetOfEntityIdProperties { get; }
+        
+    IReadOnlyPropertiesOfDictionary<Tuple<int, int>, EntityId> GridOfEntityIdProperties { get; }
 }
 public class Entity(EntityId id): IEntityReadOnly
 {
@@ -20,12 +33,30 @@ public class Entity(EntityId id): IEntityReadOnly
     private const IAction? ZeroValueAction = null;
     
     private readonly PropertiesOfType<int> _intProperties =  new PropertiesOfType<int>(ZeroValueInt);
-    private readonly PropertiesOfType<bool> _boolProperties =  new PropertiesOfType<bool>(ZeroValueBool);
-    private readonly PropertiesOfType<float> _floatProperties =  new PropertiesOfType<float>(ZeroValueFloat);
-    private readonly PropertiesOfType<string> _stringProperties =  new PropertiesOfType<string>(ZeroValueString);
-    private readonly PropertiesOfType<IAction?> _actionProperties =  new PropertiesOfType<IAction?>(ZeroValueAction);
-    private readonly PropertiesOfType<EntityId> _entityId = new PropertiesOfType<EntityId>(EntityManager.ZeroValueEntityId);
-    private readonly PropertiesOfSetOfType<EntityId> _setOfEntitiesProperties =  new PropertiesOfSetOfType<EntityId>();
+    public IReadOnlyPropertiesOfType<int> IntProperties => _intProperties;
+    
+    private readonly PropertiesOfType<IAction?> _actionProperties =  new(ZeroValueAction);
+    public IReadOnlyPropertiesOfType<IAction?> ActionProperties => _actionProperties;
+    
+    private readonly PropertiesOfSet<EntityId> _setOfEntitiesProperties =  new();
+    public IReadOnlyPropertiesOfSet<EntityId> SetOfEntityIdProperties => _setOfEntitiesProperties;
+
+    private readonly PropertiesOfDictionary<Tuple<int, int>, EntityId> _gridOfEntityIdProperties =  new();
+    public IReadOnlyPropertiesOfDictionary<Tuple<int, int>, EntityId> GridOfEntityIdProperties =>
+        _gridOfEntityIdProperties;
+
+    private readonly PropertiesOfType<bool> _boolProperties =  new(ZeroValueBool);
+    public IReadOnlyPropertiesOfType<bool> BoolProperties => _boolProperties;
+    
+    private readonly PropertiesOfType<float> _floatProperties =  new(ZeroValueFloat);
+    public IReadOnlyPropertiesOfType<float> FloatProperties => _floatProperties;
+    
+    private readonly PropertiesOfType<string> _stringProperties =  new(ZeroValueString);
+    public IReadOnlyPropertiesOfType<string> StringProperties => _stringProperties;
+    
+    private readonly PropertiesOfType<EntityId> _entityId = new(EntityManager.ZeroValueEntityId);
+    public IReadOnlyPropertiesOfType<EntityId> EntityIdProperties => _entityId;
+
 
     public IReadOnlyPropertiesOfType<T> get_readonly_properties_of_type<T>()
     {
@@ -33,23 +64,36 @@ public class Entity(EntityId id): IEntityReadOnly
         return properties as IReadOnlyPropertiesOfType<T>;
     }
 
-    public IReadOnlyPropertiesOfSetOfType<T> get_readonly_properties_of_set_of_type<T>()
+    public IReadOnlyPropertiesOfSet<T> get_readonly_properties_of_set<T>()
     {
         var properties = GetPropertiesOfSetOfType<T>();
-        return properties as IReadOnlyPropertiesOfSetOfType<T>;
+        return properties as IReadOnlyPropertiesOfSet<T>;
 
     }
+    public IReadOnlyPropertiesOfDictionary<KT, T> get_readonly_properties_of_dictionary<KT, T>() where KT : notnull
+    {
+        var properties = GetPropertiesOfDictionary<KT, T>();
+        return properties as IReadOnlyPropertiesOfDictionary<KT, T>;
+    }
 
-    public PropertiesOfSetOfType<T> GetPropertiesOfSetOfType<T>()
+    public PropertiesOfSet<T> GetPropertiesOfSetOfType<T>()
     {
         if (typeof(T) == typeof(EntityId))
         {
-            return this._setOfEntitiesProperties as PropertiesOfSetOfType<T> ?? throw new InvalidOperationException();
+            return this._setOfEntitiesProperties as PropertiesOfSet<T> ?? throw new InvalidOperationException();
         }
         throw new ArgumentException("Type not supported");
         
     }
-
+    public PropertiesOfDictionary<KT,T> GetPropertiesOfDictionary<KT,T>() where KT : notnull
+    {
+        if (typeof(T) == typeof(EntityId) && typeof(KT) ==  typeof(Tuple<int,int>))
+        {
+            return this._gridOfEntityIdProperties as PropertiesOfDictionary<KT,T> ?? throw new InvalidOperationException();
+        }
+        throw new ArgumentException("Type not supported");
+        
+    }
     public PropertiesOfType<T> GetPropertiesOfType<T>()
     {
         if (typeof(T) == typeof(int))
@@ -96,6 +140,35 @@ public class Entity(EntityId id): IEntityReadOnly
         return true;
     }
 
+    public bool try_and_get_value_of_set<T>(PropertyId<ISet<T>> propertyId, out IReadOnlySet<T>? value)
+    {
+        var properties = get_readonly_properties_of_set<T>();
+        var contains =  properties.Contains(propertyId);
+        if (!contains)
+        {
+            value = default;
+            return false;
+        }
+        var property = properties.get_read_only(propertyId);
+        value = property.CurrentValue();
+        return true;
+    }
+
+    public bool try_and_get_value_of_dictionary<KT, T>(PropertyId<IDictionary<KT, T>> propertyId, out IReadOnlyDictionary<KT, T>? value) where KT : notnull
+    {
+        var properties = get_readonly_properties_of_dictionary<KT,T>();
+        var contains =  properties.Contains(propertyId);
+        if (!contains)
+        {
+            value = default;
+            return false;
+        }
+        var property = properties.get_read_only(propertyId);
+        value = property.CurrentValue();
+        return true;
+        
+    }
+
     public StateEntity get_state()
     {
         var stateInt = _intProperties.get_state();
@@ -110,12 +183,12 @@ public class Entity(EntityId id): IEntityReadOnly
 
     }
 
-    public Property<T> add_property<T>(PropertyId<T> propertyId, T value)
+    public PropertyOfType<T> add_property<T>(PropertyId<T> propertyId, T value)
     {
         var properties = GetPropertiesOfType<T>();
         return properties.Add(propertyId, value);
     }
-    public Property<T> add_property<T>(PropertyId<T> propertyId)
+    public PropertyOfType<T> add_property<T>(PropertyId<T> propertyId)
     {
         var properties = GetPropertiesOfType<T>();
         return properties.Add(propertyId);
@@ -123,6 +196,11 @@ public class Entity(EntityId id): IEntityReadOnly
     public PropertyOfSet<T> add_property_of_set<T>(PropertyId<ISet<T>> propertyId)
     {
         var properties = GetPropertiesOfSetOfType<T>();
+        return properties.Add(propertyId);
+    }
+    public PropertyOfDictionary<KT,T> add_property_of_set<KT,T>(PropertyId<IDictionary<KT,T>> propertyId) where KT : notnull
+    {
+        var properties = GetPropertiesOfDictionary<KT,T>();
         return properties.Add(propertyId);
     }
 }

@@ -1,12 +1,12 @@
 ﻿namespace boardgames_sharp.Entity;
 
-public interface IReadOnlyPropertiesOfSetOfType<T>
+public interface IReadOnlyPropertiesOfSet<T>
 {
     IPropertyOfSetReadOnly<T> get_read_only(PropertyId<ISet<T>> propertyId);
     bool Contains(PropertyId<ISet<T>> propertyId);
     StatePropertiesOfSetOfType<T> get_state();
 }
-public class PropertiesOfSetOfType<T>(): IReadOnlyPropertiesOfSetOfType<T>
+public class PropertiesOfSet<T>(): IReadOnlyPropertiesOfSet<T>
 {
     private readonly Dictionary<PropertyId<ISet<T>>, PropertyOfSet<T>> _properties = new();
 
@@ -65,5 +65,21 @@ public class StatePropertiesOfSetOfType<T>(List<Tuple<PropertyId<ISet<T>>, IRead
             return tuple.Item2;
         }
         throw new KeyNotFoundException();
+    }
+    public bool TryAndGet(PropertyId<ISet<T>> propertyId, out IReadOnlySet<T>? value)
+    {
+        {
+            foreach (var tuple in Properties)
+            {
+                if (tuple.Item1 != propertyId)
+                {
+                    continue;
+                }
+                value = tuple.Item2;
+                return true;
+            }
+            value = default;
+            return false;
+        }
     }
 }

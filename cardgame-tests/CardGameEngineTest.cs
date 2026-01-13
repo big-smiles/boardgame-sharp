@@ -21,9 +21,6 @@ public sealed class CardGameEngineTest
         var card1 = new CardData()
         {
             Name = cardname,
-            OnPlay = new CardGameAction(
-                ((performer, ids) => throw new NotImplementedException()),
-                ((performer, ids) => throw new NotImplementedException()))
         };
         var cards = new List<ICardData>() { card1 };
         var phases = new InitializationPhase(cards,0,0);
@@ -63,16 +60,10 @@ public sealed class CardGameEngineTest
         var card1 = new CardData()
         {
             Name = cardname1,
-            OnPlay = new CardGameAction(
-                ((performer, ids) => throw new NotImplementedException()),
-                ((performer, ids) => throw new NotImplementedException()))
         };
         var card2 = new CardData()
         {
             Name = cardname2,
-            OnPlay = new CardGameAction(
-                ((performer, ids) => throw new NotImplementedException()),
-                ((performer, ids) => throw new NotImplementedException()))
         };
         var cards = new List<ICardData>() { card1, card2 };
         var phases = new InitializationPhase(cards,0,0);
@@ -121,16 +112,10 @@ public sealed class CardGameEngineTest
         var card1 = new CardData()
         {
             Name = cardname1,
-            OnPlay = new CardGameAction(
-                ((performer, ids) => throw new NotImplementedException()),
-                ((performer, ids) => throw new NotImplementedException()))
         };
         var card2 = new CardData()
         {
             Name = cardname2,
-            OnPlay = new CardGameAction(
-                ((performer, ids) => throw new NotImplementedException()),
-                ((performer, ids) => throw new NotImplementedException()))
         };
         var cards = new List<ICardData>() { card1, card2 };
         var intializationPhase = new InitializationPhase(cards,3,3);

@@ -4,7 +4,7 @@ public interface IPropertyReadOnly<T>
 {
     T CurrentValue();
 }
-public class Property<T>(T zeroValue):IPropertyReadOnly<T>
+public class PropertyOfType<T>(T zeroValue):IPropertyReadOnly<T>
 {
     private T _currentValue = default!;
     private bool _needsRecalculation = true;

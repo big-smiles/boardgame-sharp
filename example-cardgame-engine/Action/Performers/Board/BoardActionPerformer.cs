@@ -9,18 +9,38 @@ namespace example_cardgame.Action.Board;
 
 public interface IBoardActionPerformer
 {
+    void create_board();
     IBoardTile create_board_tile(int x, int y);
     IBoardTile get_board_tile(int x, int y);
     void move_card_to_board_tile(int x, int y, EntityId cardId);
 }
-public class BoardActionPerformer(IActionPerformer basePerformer, ICardGameActionPerformer performer):IBoardActionPerformer
+public class BoardActionPerformer(ICardGameActionPerformer performer):IBoardActionPerformer
 {
+    public void create_board()
+    {
+        var container = performer.Container.create_container();
+        performer.BasePerformer.Entity.add_property(container.Id, CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE,
+            CONSTANTS.CONTAINER_TYPES.BOARD);
+        performer.BasePerformer.Entity.add_property_of_dictionary(container.Id,
+            CONSTANTS.PROPERTY_IDS.IDICTIONARY.BOARD_TILES);
+        performer.BasePerformer.Entity.save_entity(container.Id, CONSTANTS.KEY_ENTITY_IDS.BOARD);
+    }
+    
     public IBoardTile create_board_tile(int x, int y)
     {
+        var pos = new Tuple<int, int>(x, y);
+        var boardId = performer.BasePerformer.Entity.get_saved_entity(CONSTANTS.KEY_ENTITY_IDS.BOARD);
+        var board = performer.BasePerformer.Entity.get_entity(boardId);
+        var grid = board.GridOfEntityIdProperties.get_read_only(CONSTANTS.PROPERTY_IDS.IDICTIONARY.BOARD_TILES).CurrentValue();
+        if (grid.ContainsKey(pos))
+        {
+            throw new Exception("Board tile already exists for position " + pos);
+        }
         var entity = performer.Container.create_container();
         performer.BasePerformer.Entity.add_property<int>(entity.Id, CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE, CONSTANTS.CONTAINER_TYPES.BOARD_TILE);
         performer.BasePerformer.Entity.add_property(entity.Id, CONSTANTS.PROPERTY_IDS.INT.BOARD_TILE_X, x);
         performer.BasePerformer.Entity.add_property(entity.Id, CONSTANTS.PROPERTY_IDS.INT.BOARD_TILE_Y, y);
+        performer.BasePerformer.Entity.PropertiesOfDicitonary.add_element(boardId, CONSTANTS.PROPERTY_IDS.IDICTIONARY.BOARD_TILES, pos, entity.Id);
         var boardTile = new BoardTile(entity);
         return boardTile;
     }

@@ -18,7 +18,7 @@ internal class BoardTile:IBoardTile
         var intProperties = entity.get_readonly_properties_of_type<int>();
         X = intProperties.get_read_only(CONSTANTS.PROPERTY_IDS.INT.BOARD_TILE_X).CurrentValue();
         Y = intProperties.get_read_only(CONSTANTS.PROPERTY_IDS.INT.BOARD_TILE_Y).CurrentValue();
-        var setOfEntityIdProperties = entity.get_readonly_properties_of_set_of_type<EntityId>();
+        var setOfEntityIdProperties = entity.get_readonly_properties_of_set<EntityId>();
         var children = setOfEntityIdProperties.get_read_only(CONSTANTS.PROPERTY_IDS.ISET.ENTITY_ID.CONTAINER_CHILDREN).CurrentValue();
         if (children.Count <= 0)
         {

@@ -3,6 +3,8 @@ using boardgames_sharp.GameState;
 using example_cardgame.Board;
 using example_cardgame.Card;
 using example_cardgame.Constants;
+using example_cardgame.NDeck;
+using example_cardgame.PlayerCharacter;
 
 namespace example_cardgame;
 
@@ -23,59 +25,117 @@ internal class GameStateObserver(IPublishCardGameState publisher):IObserver<IGam
     {
         var cards = new List<ICard>();
         var boardTiles = new List<IBoardTile>();
+        var playerCharacters = new List<IPlayerCharacter>();
+        var decks = new List<IDeck>();
         foreach (var tupleEntity in value.Entities.Entities)
         {
             var entity = tupleEntity.Item2;
-            var card =  _tryConvertEntityToCard(entity);
-            if (card != null)
+            
+            var wasCard =  _tryConvertEntityToCard(entity, out var card);
+            if (wasCard && card != null)
             {
                 cards.Add(card);
+                continue;
             }
-            var boardTile = _tryConvertEntityToBoardTile(entity);
-            if (boardTile != null)
+            var wasBoardTile = _tryConvertEntityToBoardTile(entity, out var boardTile);
+            if (wasBoardTile && boardTile != null)
             {
                 boardTiles.Add(boardTile);
+                continue;
+            }
+
+            var wasPlayerCharacter = _tryConverEntityToPlayerCharacter(entity,out var playerCharacter);
+            if (wasPlayerCharacter && playerCharacter != null)
+            {
+                playerCharacters.Add(playerCharacter);
+                continue;
+            } 
+            
+            var wasDeck = _tryConverEntityToDeck(entity,out var deck);
+            if (wasDeck && deck != null)
+            {
+                decks.Add(deck);
+                continue;
             }
         }
-        var cardGameState = new CardGameState(cards, boardTiles);
+        
+        var cardGameState = new CardGameState(
+            id: value.Id,
+            cards: cards,
+            boardTiles: boardTiles,
+            playerCharacters: playerCharacters,
+            decks: decks,
+            winnerPlayerId: value.WinnerPlayerId,
+            availableInteractions: value.AvailableInteractions
+        );
         publisher.Publish(cardGameState);
     }
 
-    private ICard? _tryConvertEntityToCard(StateEntity stateEntity)
+    private bool _tryConvertEntityToCard(StateEntity stateEntity,  out ICard? card)
     { 
-        var entityType = stateEntity.IntProperties.Get(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE);
-        if (entityType == CONSTANTS.ENTITY_TYPES.CARD)
+        var entityTypeFound = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE, out var entityType);
+    
+        if(!entityTypeFound || entityType != CONSTANTS.ENTITY_TYPES.CARD)
         {
-            return (ICard) new Card.Card(stateEntity);
-            
+            card =  null;
+            return false;
         }
-        else
-        {
-            return null;
-        }
+        card = new Card.Card(stateEntity);
+        return true;
     }
-    private IBoardTile? _tryConvertEntityToBoardTile(StateEntity stateEntity)
-    { 
-        var entityType = stateEntity.IntProperties.Get(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE);
-        if (entityType == CONSTANTS.ENTITY_TYPES.CONTAINER)
+    private bool  _tryConvertEntityToBoardTile(StateEntity stateEntity, out IBoardTile?  boardTile)
+    {
+        var foundEntityType = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE, out var entityType);
+        if (!foundEntityType || entityType != CONSTANTS.ENTITY_TYPES.CONTAINER)
         {
-            var found = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE,
-                out var containterType);
-            if (!found)
-            {
-                return null;
-            }
+            boardTile = null;
+            return false;
+        }
+        
+        var found = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE,
+            out var containterType);
+        if (!found || containterType != CONSTANTS.CONTAINER_TYPES.BOARD_TILE)
+        {
+            boardTile = null;
+            return false;
+        }
+        
+        boardTile = new BoardTile(stateEntity);
+        return true;
+    }
 
-            if (containterType != CONSTANTS.CONTAINER_TYPES.BOARD_TILE)
-            {
-                return null;
-            }
-            
-            return new BoardTile(stateEntity);
-        }
-        else
+    private bool _tryConverEntityToPlayerCharacter(StateEntity stateEntity, out IPlayerCharacter? playerCharacter)
+    {
+        var entityTypeFound =
+            stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE, out var entityType);
+        if (!entityTypeFound || entityType != CONSTANTS.ENTITY_TYPES.PLAYER_CHARACTER)
         {
-            return null;
+            playerCharacter = null;
+            return false;
         }
+
+        playerCharacter = new PlayerCharacter.PlayerCharacter(stateEntity);
+        return true;
+    }
+    private bool _tryConverEntityToDeck(StateEntity stateEntity, out IDeck? deck)
+    {
+        var entityTypeFound =
+            stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.ENTITY_TYPE, out var entityType);
+        if (!entityTypeFound || entityType != CONSTANTS.ENTITY_TYPES.CONTAINER)
+        {
+            deck = null;
+            return false;
+        }
+ 
+        var found = stateEntity.IntProperties.TryAndGet(CONSTANTS.PROPERTY_IDS.INT.CONTAINER_TYPE,
+            out var containterType);
+        if (!found || containterType != CONSTANTS.CONTAINER_TYPES.CARD_DECK)
+        {
+            deck = null;
+            return false;
+        }
+
+        deck = new Deck(stateEntity);
+        return true;
     }
 }

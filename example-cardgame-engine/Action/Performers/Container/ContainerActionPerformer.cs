@@ -9,7 +9,7 @@ public interface IContainerActionPerformer
     IEntityReadOnly create_container();
     void add_entity_to_container(EntityId entityId, EntityId containerId);
 }
-public partial class ContainerActionPerformer(IActionPerformer baseActionPerformer):IContainerActionPerformer
+public partial class ContainerActionPerformer(ICardGameActionPerformer performer):IContainerActionPerformer
 {
     private bool _checkEntityIsContainer(IEntityReadOnly entity, out string message)
     {
@@ -28,7 +28,7 @@ public partial class ContainerActionPerformer(IActionPerformer baseActionPerform
             return false;
         }
 
-        var setOfEntityIdProperties = entity.get_readonly_properties_of_set_of_type<EntityId>();
+        var setOfEntityIdProperties = entity.get_readonly_properties_of_set<EntityId>();
         if (!setOfEntityIdProperties.Contains(CONSTANTS.PROPERTY_IDS.ISET.ENTITY_ID.CONTAINER_CHILDREN))
         {
             message = "container did not have property for CONTAINER_CHILDREN";
